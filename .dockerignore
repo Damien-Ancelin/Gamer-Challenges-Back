@@ -1,0 +1,24 @@
+# Ignorer les dépendances locales
+node_modules/
+scripts/
+
+# Ignorer les fichiers de build
+dist/
+
+# Ignorer les fichiers de configuration locaux
+.env
+.env.local
+
+# Ignorer les fichiers Git
+.git
+.gitignore
+
+# Ignorer les fichiers temporaires ou système
+*.tmp
+*.swp
+.DS_Store
+Thumbs.db
+
+# Ignorer les fichiers Docker inutiles
+.dockerignore
+docker-compose.yml

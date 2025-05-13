@@ -1,0 +1,53 @@
+services:
+  gc-api: # Définition du service principal nommé "node-api"
+    container_name: gc-api # Nom du conteneur Docker pour ce service
+    build:
+      context: . # Le contexte de construction est le répertoire actuel
+      dockerfile: Dockerfile.dev # Utilise le fichier Dockerfile.dev pour construire l'image
+    ports:
+      - "${API_PORT}:3000" # Mappe le port défini dans la variable d'environnement API_PORT au port 3000 du conteneur
+    env_file:
+      - .env # Charge les variables d'environnement depuis le fichier .env
+    volumes:
+      - .:/usr/src/app # Monte le dossier local ./src dans /usr/src/app du conteneur (synchronisation des fichiers source)
+      - ./nodemon.json:/usr/src/app/nodemon.json # Monte le fichier nodemon.json dans le conteneur
+    # Politique de redémarrage
+    restart: unless-stopped
+    # Dépendances du service
+    depends_on:
+      gc_db:
+        condition: service_healthy
+
+  # Définition du service PostgreSQL
+  gc_db:
+    # Image Docker officielle de PostgreSQL
+    image: postgres:latest
+    # Nom explicite du conteneur pour faciliter son identification
+    container_name: gc_db
+    # Redémarre automatiquement le conteneur sauf en cas d'arrêt manuel
+    restart: unless-stopped
+    # Charge les variables d'environnement depuis le fichier ./env
+    env_file:
+      - ./.env
+    # Mappe le port PostgreSQL défini dans .env (par défaut 5432)
+    ports:
+      - '${POSTGRES_PORT}:${POSTGRES_PORT}'
+    # Monte un volume local contenant des scripts d'initialisation dans le conteneur
+    volumes:
+      # Monte un volume local pour persister les données PostgreSQL
+      - ./gc-pg-data:/var/lib/postgresql/data
+
+    # Vérifie si PostgreSQL est prêt à accepter des connexions
+    healthcheck:
+      # Commande exécutée pour vérifier l'état de PostgreSQL
+      test: ['CMD', 'pg_isready', '-U', '${POSTGRES_USER}', '-d', '${POSTGRES_DB}']
+      # Intervalle entre chaque vérification
+      interval: 10s
+      # Temps maximum pour chaque vérification
+      timeout: 5s
+      # Nombre de tentatives avant de considérer le service comme non sain
+      retries: 5
+
+# Déclaration des volumes nommés
+volumes:
+  gc-pg-data:

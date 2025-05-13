@@ -1,11 +1,11 @@
 import express from 'express';
 import { router } from './Routes/index';
-import "dotenv/config";
 import morgan from 'morgan';
 import cookieParser from 'cookie-parser';
+import "dotenv/config";
 
 const app = express();
-const port = 3000;
+const port = process.env.API_PORT || 3000;
 
 // Middleware
 app.use(cookieParser());

@@ -16,8 +16,13 @@
     "start:prod": "npm run clean && npm run build && npm start",
     "clean": "rm -rf dist",
     "dev": "nodemon",
-    "docker:dev:start": "docker compose -f docker-compose.dev.yml up --build",
-    "docker:dev:stop": "docker compose -f docker-compose.dev.yml down"
+    "docker:dev:start": "docker compose -f docker-compose.dev.yml up -d --build",
+    "docker:dev:stop": "docker compose -f docker-compose.dev.yml down",
+    "docker:dev:clean": "docker compose -f docker-compose.dev.yml down -v --remove-orphans",
+    "docker:dev:restart": "docker compose -f docker-compose.dev.yml down && docker compose -f docker-compose.dev.yml up -d --build",
+    "docker:dev:clean-restart": "docker compose -f docker-compose.dev.yml down -v --remove-orphans && docker compose -f docker-compose.dev.yml up -d --build",
+    "docker:dev:logs": "docker compose -f docker-compose.dev.yml logs"
+
   },
   "repository": {
     "type": "git",

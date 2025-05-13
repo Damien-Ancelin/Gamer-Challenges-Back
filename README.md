@@ -31,6 +31,7 @@ Gamer Challenges est une plateforme dédiée aux joueurs souhaitant repousser le
    POSTGRES_DB=db
    POSTGRES_PORT=5432
    POSTGRES_HOST=localhost
+   API_PORT=3000
    ```
 
 4. Installez les dépendances :
