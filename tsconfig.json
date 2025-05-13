@@ -1,16 +1,28 @@
 {
   "compilerOptions": {
-    "target": "es2020",                // Version JavaScript cible (ES2020 permet des fonctionnalités modernes comme BigInt, optional chaining, etc.)
-    "module": "commonjs",              // Type de module utilisé (CommonJS est le standard pour Node.js)
-    "esModuleInterop": true,           // Permet une meilleure compatibilité entre les modules CommonJS et ES Modules
+    "target": "es2020",                       // Version JavaScript cible (ES2020 permet des fonctionnalités modernes comme BigInt, optional chaining, etc.)
+    "module": "commonjs",                     // Type de module utilisé (CommonJS est le standard pour Node.js)
+    "moduleResolution": "node",               // Résolution des modules selon le système de modules Node.js
+    "resolveJsonModule": true,             // Permet d'importer des fichiers JSON comme modules
+    "allowSyntheticDefaultImports": true,     // Permet d'importer des modules CommonJS avec une syntaxe ES Module (ex: `import fs from 'fs'`)
+    "esModuleInterop": true,                  // Permet une meilleure compatibilité entre les modules CommonJS et ES Modules
     "forceConsistentCasingInFileNames": true, // Force la cohérence dans la casse des noms de fichiers (utile sur les systèmes sensibles à la casse comme Linux)
-    "strict": true,                    // Active toutes les vérifications strictes de TypeScript (meilleure sécurité et détection des erreurs)
-    "skipLibCheck": true,              // Ignore la vérification des types dans les fichiers `.d.ts` des dépendances (accélère la compilation)
-    "outDir": "dist",                  // Répertoire de sortie pour les fichiers compilés (les fichiers JavaScript générés iront dans `dist`)
-    "rootDir": "src",                  // Répertoire racine des fichiers source (TypeScript compilera uniquement les fichiers dans `src`)
-    "experimentalDecorators": true,    // Active le support des décorateurs (nécessaire pour certains frameworks comme TypeORM ou NestJS)
-    "emitDecoratorMetadata": true      // Génère des métadonnées pour les décorateurs (souvent utilisé avec `experimentalDecorators`)
+    "strict": true,                           // Active toutes les vérifications strictes de TypeScript (meilleure sécurité et détection des erreurs)
+    "skipLibCheck": true,                     // Ignore la vérification des types dans les fichiers `.d.ts` des dépendances (accélère la compilation)
+    "outDir": "dist",                         // Répertoire de sortie pour les fichiers compilés (les fichiers JavaScript générés iront dans `dist`)
+    "rootDir": "src",                         // Répertoire racine des fichiers source (TypeScript compilera uniquement les fichiers dans `src`)
+    "experimentalDecorators": true,           // Active le support des décorateurs (nécessaire pour certains frameworks comme TypeORM ou NestJS)
+    "emitDecoratorMetadata": true,            // Génère des métadonnées pour les décorateurs (souvent utilisé avec `experimentalDecorators`)
+    "noUnusedLocals": true,                   // Signale les variables locales non utilisées (aide à garder le code propre)
+    "noUnusedParameters": true,               // Signale les paramètres non utilisés dans les fonctions (aide à garder le code propre)
+    "baseUrl": ".",                           // Définit la base pour la résolution des modules (utile pour les chemins relatifs)
+    "paths": {
+      "*": [
+        "node_modules/*",                     // Permet de résoudre les modules dans le dossier `node_modules`
+        "src/*"                               // Permet de résoudre les modules dans le dossier `src`
+      ]
+    }
   },
-  "include": ["src"],                  // Inclut uniquement les fichiers du dossier `src` pour la compilation
-  "exclude": ["node_modules", "dist"] // Exclut les dossiers `node_modules` et `dist` de la compilation
+  "include": ["src/**/*"],                    // Inclut uniquement les fichiers du dossier `src` pour la compilation
+  "exclude": ["node_modules", "dist"]         // Exclut les dossiers `node_modules` et `dist` de la compilation
 }
