@@ -11,7 +11,7 @@
   "homepage": "https://github.com/Damien-Ancelin/Gamer-Challenges-Back#readme",
   "keywords": [],
   "scripts": {
-    "start": "node dist/index.js",
+    "start": "NODE_ENV=production node dist/index.js",
     "build": "tsc",
     "start:prod": "npm run clean && npm run build && npm start",
     "clean": "rm -rf dist",
@@ -24,14 +24,23 @@
     "url": "git+https://github.com/Damien-Ancelin/Gamer-Challenges-Back.git"
   },
   "dependencies": {
+    "cookie-parser": "^1.4.7",
+    "debug": "^4.4.0",
+    "dotenv": "^16.5.0",
     "express": "^5.1.0",
-    "tsconfig-paths": "^4.2.0"
+    "morgan": "^1.10.0",
+    "pg": "^8.16.0"
   },
   "devDependencies": {
+    "@types/cookie-parser": "^1.4.8",
+    "@types/debug": "^4.1.12",
     "@types/express": "^5.0.1",
+    "@types/morgan": "^1.9.9",
     "@types/node": "^22.14.1",
+    "@types/pg": "^8.15.1",
     "nodemon": "^3.1.9",
     "ts-node": "^10.9.2",
+    "tsconfig-paths": "^4.2.0",
     "typescript": "^5.8.3"
   }
 }

@@ -25,7 +25,7 @@ Gamer Challenges est une plateforme dédiée aux joueurs souhaitant repousser le
 3. Créez et remplissez le fichier .env à partir du fichier ```.env.example``` :
 
    ```bash
-   environment=development
+   NODE_ENV=development
    POSTGRES_USER=user
    POSTGRES_PASSWORD=password
    POSTGRES_DB=db
