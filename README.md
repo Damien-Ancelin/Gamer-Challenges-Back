@@ -30,8 +30,11 @@ Gamer Challenges est une plateforme dédiée aux joueurs souhaitant repousser le
    POSTGRES_PASSWORD=password
    POSTGRES_DB=db
    POSTGRES_PORT=5432
-   POSTGRES_HOST=localhost
+   POSTGRES_HOST=container-postgres
    API_PORT=3000
+   REDIS_PORT=6379
+   REDIS_HOST=container-redis
+   REDIS_URL=redis://container_redis_name:redis_port
    ```
 
 4. Installez les dépendances :
@@ -43,7 +46,7 @@ Gamer Challenges est une plateforme dédiée aux joueurs souhaitant repousser le
 5. Lancez le projet :
 
    ```bash
-   npm run dev
+   npm run docker:dev:start
    ```
 
 6. Ouvrez votre navigateur et accédez à <http://localhost:3000>.

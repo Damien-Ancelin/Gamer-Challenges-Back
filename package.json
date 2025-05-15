@@ -14,15 +14,13 @@
     "start": "NODE_ENV=production node dist/index.js",
     "build": "tsc",
     "start:prod": "npm run clean && npm run build && npm start",
-    "clean": "rm -rf dist",
+    "clean": "rm -rf dist && sudo rm -rf ./pg-data",
     "dev": "nodemon",
     "docker:dev:start": "docker compose -f docker-compose.dev.yml up -d --build",
     "docker:dev:stop": "docker compose -f docker-compose.dev.yml down",
-    "docker:dev:clean": "docker compose -f docker-compose.dev.yml down -v --remove-orphans",
+    "docker:dev:stop-clean": "docker compose -f docker-compose.dev.yml down -v --remove-orphans",
     "docker:dev:restart": "docker compose -f docker-compose.dev.yml down && docker compose -f docker-compose.dev.yml up -d --build",
-    "docker:dev:clean-restart": "docker compose -f docker-compose.dev.yml down -v --remove-orphans && docker compose -f docker-compose.dev.yml up -d --build",
-    "docker:dev:logs": "docker compose -f docker-compose.dev.yml logs"
-
+    "docker:dev:clean-restart": "docker compose -f docker-compose.dev.yml down -v --remove-orphans && docker compose -f docker-compose.dev.yml up -d --build"
   },
   "repository": {
     "type": "git",
