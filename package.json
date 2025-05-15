@@ -32,7 +32,8 @@
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
     "morgan": "^1.10.0",
-    "pg": "^8.16.0"
+    "pg": "^8.16.0",
+    "redis": "^5.0.1"
   },
   "devDependencies": {
     "@types/cookie-parser": "^1.4.8",
