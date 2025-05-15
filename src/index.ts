@@ -1,12 +1,8 @@
 import express from 'express';
-import { router } from './Routes/index';
 import morgan from 'morgan';
 import cookieParser from 'cookie-parser';
 import "dotenv/config";
-
-// ! Test redis connection
-import redisClient from './configs/redis';
-console.log(redisClient);
+import { router } from './routes/index';
 
 const app = express();
 const port = process.env.API_PORT || 3000;

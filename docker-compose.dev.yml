@@ -23,7 +23,7 @@ services:
   # Définition du service PostgreSQL
   gc_db:
     # Image Docker officielle de PostgreSQL
-    image: postgres:latest
+    image: postgres:16
     # Nom explicite du conteneur pour faciliter son identification
     container_name: gc_db
     # Redémarre automatiquement le conteneur sauf en cas d'arrêt manuel
