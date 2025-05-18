@@ -4,10 +4,11 @@ import debug from "debug";
 import sequelize from "../configs/sequelize";
 import { Role } from 'models/RoleModel';
 import { User } from 'models/UserModel';
+import { UserRole } from 'models/UserRoleModel';
 
 const sequelizeDebug = debug('migration:sequelize');
 
-sequelizeDebug("Seeding database...");
+sequelizeDebug("🔄 Seeding database...");
 
 try {
   await User.destroy({
@@ -17,6 +18,12 @@ try {
   });
 
   await Role.destroy({
+    truncate: true,
+    restartIdentity: true,
+    cascade: true,
+  });
+
+  await UserRole.destroy({
     truncate: true,
     restartIdentity: true,
     cascade: true,

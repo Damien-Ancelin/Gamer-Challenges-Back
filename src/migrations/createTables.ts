@@ -5,6 +5,8 @@ import sequelize from "../configs/sequelize";
 
 const sequelizeDebug = debug('migration:sequelize');
 
+sequelizeDebug("🔄 Starting database sync...");
+
 try {
     await sequelize.drop();
     sequelizeDebug("✅ All models were dropped successfully.");
