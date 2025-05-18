@@ -1,7 +1,9 @@
 import { Optional } from 'sequelize';
-import { Table, Column, DataType, CreatedAt, UpdatedAt, ForeignKey, Model, BelongsToMany, HasMany } from 'sequelize-typescript';
+import { Table, Column, DataType, CreatedAt, UpdatedAt, Model, BelongsToMany, HasMany } from 'sequelize-typescript';
+
 import { Platform } from './PlatformModel';
 import { GamePlatform } from './GamePlatformModel';
+import { Challenge } from './ChallengeModel';
 
 
 interface GameAttributes {
@@ -14,7 +16,6 @@ interface GameAttributes {
   publisher: string;
   pegi: string;
   releaseDate: Date;
-  PlatformId: number;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -84,13 +85,6 @@ export class Game extends Model<GameAttributes, GameCreation> implements GameAtt
   })
   declare releaseDate: Date;
 
-  @ForeignKey(() => Platform)
-    @Column({
-      type: DataType.INTEGER,
-      allowNull: false,
-    })
-    declare PlatformId: number
-
   @CreatedAt
     declare createdAt: Date;
   
@@ -105,7 +99,7 @@ export class Game extends Model<GameAttributes, GameCreation> implements GameAtt
   
   // 1:N relationship with GamePlatform
   // This means that a game can have many game platforms and a game platform belongs to one game
-  @HasMany((): typeof GamePlatform => GamePlatform)
-  declare gamePlatforms: GamePlatform[];
+  @HasMany((): typeof Challenge => Challenge)
+  declare challenges?: Challenge[];
 }
   
