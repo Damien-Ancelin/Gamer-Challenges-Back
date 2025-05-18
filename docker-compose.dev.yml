@@ -15,17 +15,17 @@ services:
     restart: unless-stopped
     # Dépendances du service
     depends_on:
-      gc_db:
+      gc-db:
         condition: service_healthy
       gc-redis:
         condition: service_healthy
 
   # Définition du service PostgreSQL
-  gc_db:
+  gc-db:
     # Image Docker officielle de PostgreSQL
     image: postgres:16
     # Nom explicite du conteneur pour faciliter son identification
-    container_name: gc_db
+    container_name: gc-db
     # Redémarre automatiquement le conteneur sauf en cas d'arrêt manuel
     restart: unless-stopped
     # Charge les variables d'environnement depuis le fichier ./env

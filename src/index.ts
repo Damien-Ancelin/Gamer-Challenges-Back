@@ -2,6 +2,7 @@ import express from 'express';
 import morgan from 'morgan';
 import cookieParser from 'cookie-parser';
 import "dotenv/config";
+
 import { router } from './routes/index';
 
 const app = express();

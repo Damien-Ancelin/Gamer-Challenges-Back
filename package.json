@@ -14,13 +14,13 @@
   "scripts": {
     "start": "NODE_ENV=production node dist/index.js",
     "build": "tsc && tsc-alias",
-    "dev": "nodemon",
-    "start:prod": "npm run clean && npm run build && npm start",
     "clean": "rm -rf dist",
-    "docker:dev:start": "docker compose -f docker-compose.dev.yml up -d --build",
+    "start:prod": "npm run clean && npm run build && npm start",
+    "dev": "nodemon",
+    "docker:dev:start": "docker compose -f docker-compose.dev.yml up -d",
     "docker:dev:stop": "docker compose -f docker-compose.dev.yml down",
     "docker:dev:stop-clean": "docker compose -f docker-compose.dev.yml down -v --remove-orphans",
-    "docker:dev:restart": "docker compose -f docker-compose.dev.yml down && docker compose -f docker-compose.dev.yml up -d --build",
+    "docker:dev:restart": "docker compose -f docker-compose.dev.yml down && docker compose -f docker-compose.dev.yml up -d",
     "docker:dev:clean-restart": "docker compose -f docker-compose.dev.yml down -v --remove-orphans && docker compose -f docker-compose.dev.yml up -d --build"
   },
   "repository": {
