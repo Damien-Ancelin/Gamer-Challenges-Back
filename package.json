@@ -8,43 +8,50 @@
   "bugs": {
     "url": "https://github.com/Damien-Ancelin/Gamer-Challenges-Back/issues"
   },
+  "type": "module",
   "homepage": "https://github.com/Damien-Ancelin/Gamer-Challenges-Back#readme",
   "keywords": [],
   "scripts": {
     "start": "NODE_ENV=production node dist/index.js",
-    "build": "tsc",
+    "build": "tsc && tsc-alias",
+    "clean": "rm -rf dist",
     "start:prod": "npm run clean && npm run build && npm start",
-    "clean": "rm -rf dist && sudo rm -rf ./pg-data",
-    "dev": "nodemon",
-    "docker:dev:start": "docker compose -f docker-compose.dev.yml up -d --build",
+    "dev": "tsx watch src/index.ts",
+    "docker:dev:start": "docker compose -f docker-compose.dev.yml up -d",
     "docker:dev:stop": "docker compose -f docker-compose.dev.yml down",
     "docker:dev:stop-clean": "docker compose -f docker-compose.dev.yml down -v --remove-orphans",
-    "docker:dev:restart": "docker compose -f docker-compose.dev.yml down && docker compose -f docker-compose.dev.yml up -d --build",
-    "docker:dev:clean-restart": "docker compose -f docker-compose.dev.yml down -v --remove-orphans && docker compose -f docker-compose.dev.yml up -d --build"
+    "docker:dev:restart": "docker compose -f docker-compose.dev.yml down && docker compose -f docker-compose.dev.yml up -d",
+    "docker:dev:clean-restart": "docker compose -f docker-compose.dev.yml down -v --remove-orphans && docker compose -f docker-compose.dev.yml up -d --build",
+    "db:create:dev": "DEBUG=migration:* POSTGRES_HOST=localhost tsx src/migrations/createTables.ts",
+    "db:seeding:dev": "DEBUG=migration:* POSTGRES_HOST=localhost tsx src/migrations/seeding.ts"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Damien-Ancelin/Gamer-Challenges-Back.git"
   },
   "dependencies": {
+    "argon2": "^0.43.0",
     "cookie-parser": "^1.4.7",
-    "debug": "^4.4.0",
+    "debug": "^4.4.1",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
     "morgan": "^1.10.0",
     "pg": "^8.16.0",
-    "redis": "^5.0.1"
+    "redis": "^5.0.1",
+    "reflect-metadata": "^0.2.2",
+    "sequelize": "^6.37.7",
+    "sequelize-typescript": "^2.1.6"
   },
   "devDependencies": {
+    "@faker-js/faker": "^9.8.0",
     "@types/cookie-parser": "^1.4.8",
     "@types/debug": "^4.1.12",
     "@types/express": "^5.0.1",
     "@types/morgan": "^1.9.9",
-    "@types/node": "^22.14.1",
+    "@types/node": "^22.15.18",
     "@types/pg": "^8.15.1",
-    "nodemon": "^3.1.9",
-    "ts-node": "^10.9.2",
-    "tsconfig-paths": "^4.2.0",
+    "tsc-alias": "^1.8.16",
+    "tsx": "^4.19.4",
     "typescript": "^5.8.3"
   }
 }

@@ -8,24 +8,25 @@ services:
       - "${API_PORT}:3000" # Mappe le port défini dans la variable d'environnement API_PORT au port 3000 du conteneur
     env_file:
       - .env # Charge les variables d'environnement depuis le fichier .env
+    environment:
+      - NODE_ENV=development # Définit la variable d'environnement NODE_ENV à "development"
+      - DEBUG=app:*,config:*,migration:* # Définit la variable d'environnement DEBUG pour activer le débogage
     volumes:
       - .:/usr/src/app # Monte le dossier local ./src dans /usr/src/app du conteneur (synchronisation des fichiers source)
-      - ./nodemon.json:/usr/src/app/nodemon.json # Monte le fichier nodemon.json dans le conteneur
-    # Politique de redémarrage
     restart: unless-stopped
     # Dépendances du service
     depends_on:
-      gc_db:
+      gc-db:
         condition: service_healthy
       gc-redis:
         condition: service_healthy
 
   # Définition du service PostgreSQL
-  gc_db:
+  gc-db:
     # Image Docker officielle de PostgreSQL
-    image: postgres:latest
+    image: postgres:16
     # Nom explicite du conteneur pour faciliter son identification
-    container_name: gc_db
+    container_name: gc-db
     # Redémarre automatiquement le conteneur sauf en cas d'arrêt manuel
     restart: unless-stopped
     # Charge les variables d'environnement depuis le fichier ./env
@@ -62,7 +63,7 @@ services:
       - '${REDIS_PORT}:6379'
     # Monte un volume local contenant des scripts d'initialisation dans le conteneur
     volumes:
-      - ./redis:/usr/local/etc/redis
+      - gc-redis-data:/data
     # Vérifie si Redis est prêt à accepter des connexions
     healthcheck:
       # Commande exécutée pour vérifier l'état de Redis
@@ -78,3 +79,4 @@ services:
 # Déclaration des volumes nommés
 volumes:
   gc-pg-data:
+  gc-redis-data:
