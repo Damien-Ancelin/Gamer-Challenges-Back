@@ -4,9 +4,12 @@ import cookieParser from 'cookie-parser';
 import "dotenv/config";
 
 import { router } from './routes/index';
+import { initializeDb } from './configs/sequelize';
 
 const app = express();
 const port = process.env.API_PORT || 3000;
+
+await initializeDb();
 
 // Middleware
 app.use(cookieParser());
