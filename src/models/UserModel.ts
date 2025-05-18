@@ -19,8 +19,8 @@ export interface UserCreationAttributes
   extends Optional<UserAttributes, 'id' | 'createdAt' | 'updatedAt'> {}
 
 @Table({
-  tableName: 'user',
-  modelName: 'User',
+  tableName: "app_user",
+  modelName: "User",
   timestamps: true,
 })
 

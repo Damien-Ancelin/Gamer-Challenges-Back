@@ -1,19 +1,18 @@
-import 'dotenv/config';
+import "dotenv/config";
 import debug from "debug";
 
 import sequelize from "../configs/sequelize";
 
-const sequelizeDebug = debug('migration:sequelize');
+const sequelizeDebug = debug("migration:sequelize");
 
-sequelizeDebug("🔄 Starting database sync...");
 
-try {
+(async () => {
+  sequelizeDebug("🔄 Starting database sync...");
+  try {
     await sequelize.drop();
     sequelizeDebug("✅ All models were dropped successfully.");
   } catch (error) {
     sequelizeDebug("❌ Error dropping database:", (error as Error).message);
-  } finally {
-    await sequelize.close();
   }
 
   try {
@@ -24,3 +23,4 @@ try {
   } finally {
     await sequelize.close();
   }
+})();

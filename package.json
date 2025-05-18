@@ -22,7 +22,8 @@
     "docker:dev:stop-clean": "docker compose -f docker-compose.dev.yml down -v --remove-orphans",
     "docker:dev:restart": "docker compose -f docker-compose.dev.yml down && docker compose -f docker-compose.dev.yml up -d",
     "docker:dev:clean-restart": "docker compose -f docker-compose.dev.yml down -v --remove-orphans && docker compose -f docker-compose.dev.yml up -d --build",
-    "db:create:dev": "DEBUG=migration:* POSTGRES_HOST=localhost tsx src/migrations/createTables.ts"
+    "db:create:dev": "DEBUG=migration:* POSTGRES_HOST=localhost tsx src/migrations/createTables.ts",
+    "db:seeding:dev": "DEBUG=migration:* POSTGRES_HOST=localhost tsx src/migrations/seeding.ts"
   },
   "repository": {
     "type": "git",
@@ -42,6 +43,7 @@
     "sequelize-typescript": "^2.1.6"
   },
   "devDependencies": {
+    "@faker-js/faker": "^9.8.0",
     "@types/cookie-parser": "^1.4.8",
     "@types/debug": "^4.1.12",
     "@types/express": "^5.0.1",
