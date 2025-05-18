@@ -24,6 +24,6 @@ const models = {
   Game,
   Platform,
   GamePlatform,
-}
+};
 
 export default models;

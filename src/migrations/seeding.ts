@@ -117,7 +117,6 @@ const sequelizeDebug = debug("migration:sequelize");
         password: await argon2.hash("test1234"),
       });
     }
-    sequelizeDebug("users", users);
     const createdUsers = await User.bulkCreate(users);
 
     sequelizeDebug("✅ Users created successfully.");

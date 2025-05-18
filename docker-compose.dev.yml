@@ -63,7 +63,7 @@ services:
       - '${REDIS_PORT}:6379'
     # Monte un volume local contenant des scripts d'initialisation dans le conteneur
     volumes:
-      - ./redis:/usr/local/etc/redis
+      - gc-redis-data:/data
     # Vérifie si Redis est prêt à accepter des connexions
     healthcheck:
       # Commande exécutée pour vérifier l'état de Redis
@@ -79,3 +79,4 @@ services:
 # Déclaration des volumes nommés
 volumes:
   gc-pg-data:
+  gc-redis-data:
