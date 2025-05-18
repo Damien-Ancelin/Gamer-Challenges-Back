@@ -1,7 +1,11 @@
 import { Optional } from 'sequelize';
-import { Table, Column, Model, DataType, CreatedAt, UpdatedAt, BelongsToMany } from 'sequelize-typescript';
+import { Table, Column, Model, DataType, CreatedAt, UpdatedAt, BelongsToMany, HasMany } from 'sequelize-typescript';
 import { Role } from './RoleModel';
 import { UserRole } from './UserRoleModel';
+import { Participation } from './ParticipationModel';
+import { Challenge } from './ChallengeModel';
+import { ChallengeReview } from './ChallengeReviewModel';
+import { ParticipationReview } from './ParticipationReview';
 
 interface UserAttributes {
   id: number;
@@ -79,4 +83,16 @@ export class User extends Model<UserAttributes, UserCreationAttributes> implemen
   // Associations
   @BelongsToMany(() => Role, () => UserRole)
   declare roles?: Role[];
+
+  @HasMany((): typeof Participation => Participation)
+  declare participations?: Participation[];
+
+  @HasMany((): typeof Challenge => Challenge)
+  declare challenges?: Challenge[];
+
+  @HasMany((): typeof ParticipationReview => ParticipationReview)
+  declare participationReviews?: ParticipationReview[];
+
+  @HasMany((): typeof ChallengeReview => ChallengeReview)
+  declare challengeReviews?: ChallengeReview[];
 }

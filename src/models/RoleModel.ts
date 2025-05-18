@@ -1,5 +1,6 @@
 import { Optional } from "sequelize";
 import { BelongsToMany, Column, CreatedAt, DataType, Model, Table, UpdatedAt } from 'sequelize-typescript';
+
 import { User } from "./UserModel";
 import { UserRole } from "./UserRoleModel";
 

@@ -1,5 +1,6 @@
+import { Optional } from "sequelize";
 import { Column, Table, DataType, Model, CreatedAt, UpdatedAt, ForeignKey } from "sequelize-typescript";
-import { Optional } from "sequelize/types";
+
 import { User } from "./UserModel";
 import { Role } from "./RoleModel";
 
