@@ -42,6 +42,9 @@ export class Role extends Model<RoleAttributes, RoleAttributesCreation> implemen
   @UpdatedAt
     declare updatedAt: Date;
 
+  // Associations
+  // N:N relationship with User through UserRole
+  // This means that a role can have many users and a user can have many roles
   @BelongsToMany(() => User, () => UserRole)
     declare users?: User[];
 }

@@ -60,10 +60,14 @@ export class ChallengeReview extends Model<ChallengeReviewAttributes, ChallengeR
   @UpdatedAt
   declare updatedAt: Date;
 
-  // Associations
+  // * Associations
+  // 1:N relationship with User
+  // This means that a user can have many reviews but a review belongs to one user
   @BelongsTo(() => User)
   declare user?: User;
-
+  
+  // 1:N relationship with Challenge
+  // This means that a challenge can have many reviews but a review belongs to one challenge
   @BelongsTo(() => Challenge)
   declare challenge?: Challenge;
 }

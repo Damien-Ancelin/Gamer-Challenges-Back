@@ -1,11 +1,12 @@
 import { Optional } from 'sequelize';
 import { Table, Column, Model, DataType, CreatedAt, UpdatedAt, BelongsToMany, HasMany } from 'sequelize-typescript';
+
 import { Role } from './RoleModel';
 import { UserRole } from './UserRoleModel';
 import { Participation } from './ParticipationModel';
 import { Challenge } from './ChallengeModel';
 import { ChallengeReview } from './ChallengeReviewModel';
-import { ParticipationReview } from './ParticipationReview';
+import { ParticipationReview } from './ParticipationReviewModel';
 
 interface UserAttributes {
   id: number;
@@ -80,19 +81,29 @@ export class User extends Model<UserAttributes, UserCreationAttributes> implemen
   @UpdatedAt
   declare updatedAt: Date;
 
-  // Associations
+  // * Associations
+  // N:N relationship with Role through UserRole
+  // This means that a user can have multiple roles and a role can belong to multiple users
   @BelongsToMany(() => Role, () => UserRole)
   declare roles?: Role[];
 
+  // 1:N relationship with Participation
+  // This means that a user can have multiple participations in challenges
   @HasMany((): typeof Participation => Participation)
   declare participations?: Participation[];
 
+  // 1:N relationship with Challenge
+  // This is the challenge created by the user
   @HasMany((): typeof Challenge => Challenge)
   declare challenges?: Challenge[];
 
+  // 1:N relationship with ParticipationReview
+  // This means that a user can review multiple participations
   @HasMany((): typeof ParticipationReview => ParticipationReview)
   declare participationReviews?: ParticipationReview[];
 
+  // 1:N relationship with ChallengeReview
+  // This means that a user can review multiple challenges
   @HasMany((): typeof ChallengeReview => ChallengeReview)
   declare challengeReviews?: ChallengeReview[];
 }

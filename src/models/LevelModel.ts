@@ -3,23 +3,24 @@ import { Column, Table, DataType, Model, CreatedAt, UpdatedAt, HasMany } from "s
 
 import { Challenge } from "./ChallengeModel";
 
-interface CategoryAttributes {
+interface LevelAttributes {
   id: number;
   name: string;
+  levelColor: string;
   createdAt: Date;
   updatedAt: Date;
 }
 
-export interface CategoryCreation
-  extends Optional<CategoryAttributes, 'id' | 'createdAt' | 'updatedAt'> {}
+export interface LevelCreation
+  extends Optional<LevelAttributes, 'id' | 'createdAt' | 'updatedAt'> {}
 
 @Table({
-  tableName: 'category',
-  modelName: 'Category',
+  tableName: "level",
+  modelName: "Level",
   timestamps: true,
-})
+}) 
 
-export class Category extends Model<CategoryAttributes, CategoryCreation> implements CategoryAttributes {
+export class Level extends Model<LevelAttributes, LevelCreation> implements LevelAttributes {
   @Column({
     type: DataType.INTEGER,
     autoIncrement: true,
@@ -34,15 +35,21 @@ export class Category extends Model<CategoryAttributes, CategoryCreation> implem
   })
   declare name: string;
 
+  @Column({
+    type: DataType.STRING(7),
+    allowNull: false,
+  })
+  declare levelColor: string;
+
   @CreatedAt
     declare createdAt: Date;
   
   @UpdatedAt
     declare updatedAt: Date;
-  
+
   // Associations
   // 1:N relationship with Challenge
-  // This means that a category can have many challenges but a challenge can only belong to one category
+  // This means that a level can have many challenges but a challenge can only belong to one level
   @HasMany((): typeof Challenge => Challenge)
   declare challenges: Challenge[];
 }

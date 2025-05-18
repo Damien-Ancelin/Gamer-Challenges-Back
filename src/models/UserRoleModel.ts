@@ -48,4 +48,7 @@ export class UserRole extends Model<UserRoleAttributes, UserRoleCreation> implem
   
   @UpdatedAt
     declare updatedAt: Date;
+
+  // Associations
+  // User and Role associations are defined in their respective models
 }

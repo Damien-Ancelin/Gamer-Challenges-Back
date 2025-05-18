@@ -61,9 +61,13 @@ export class ParticipationReview extends Model<ParticipationReviewAttributes, Pa
   declare updatedAt: Date;
 
   // Associations
+  // 1:N relationship with User
+  // This means that a participation review belongs to a user
   @BelongsTo(() => User)
   declare user?: User;
   
+  // 1:N relationship with Participation
+  // This means that a participation review belongs to a participation
   @BelongsTo(() => Participation)
   declare participation?: Participation;
 }

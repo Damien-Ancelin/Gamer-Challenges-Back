@@ -3,7 +3,7 @@ import { Table, Column, DataType, CreatedAt, UpdatedAt, ForeignKey, Model, Belon
 
 import { User } from "./UserModel";
 import { Challenge } from './ChallengeModel';
-import { ParticipationReview } from './ParticipationReview';
+import { ParticipationReview } from './ParticipationReviewModel';
 
 interface ParticipationAttributes {
   id: number;
@@ -66,12 +66,18 @@ export class Participation extends Model<ParticipationAttributes, ParticipationC
     declare updatedAt: Date;
 
   // Associations
+  // 1:N relationship with User
+  // This means that a user can have many participations but a participation belongs to one user
   @BelongsTo((): typeof User => User)
   declare user?: User;
-
+  
+  // 1:N relationship with Challenge
+  // This means that a challenge can have many participations but a participation belongs to one challenge
   @BelongsTo((): typeof Challenge => Challenge)
   declare challenge?: Challenge;
-
+  
+  // 1:N relationship with ParticipationReview
+  // This means that a participation can have many reviews but a review belongs to one participation
   @HasMany((): typeof ParticipationReview => ParticipationReview)
   declare reviews?: ParticipationReview[];
 }
