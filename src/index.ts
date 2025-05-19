@@ -5,6 +5,8 @@ import "dotenv/config";
 
 import { router } from './routes/index';
 import { initializeDb } from './configs/sequelize';
+import { configureHelmet } from 'configs/helmet';
+import { configureCors } from 'configs/cors';
 
 const app = express();
 const port = process.env.API_PORT || 3000;
@@ -12,6 +14,8 @@ const port = process.env.API_PORT || 3000;
 await initializeDb();
 
 // Middleware
+configureHelmet(app);
+app.use(configureCors());
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

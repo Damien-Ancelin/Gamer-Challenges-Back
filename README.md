@@ -35,6 +35,8 @@ Gamer Challenges est une plateforme dédiée aux joueurs souhaitant repousser le
    REDIS_PORT=6379
    REDIS_HOST=container-redis
    REDIS_URL=redis://container_redis_name:redis_port
+   FRONTEND_URL=http://url:port
+   API_URL=http://url:port
    ```
 
 4. Installez les dépendances :
