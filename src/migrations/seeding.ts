@@ -107,6 +107,14 @@ const sequelizeDebug = debug("migration:sequelize");
 
     // 2. Create Users
     const users = [];
+    users.push({
+      lastname: "Anc",
+      firstname: "Dam",
+      email: "test@mail.io",
+      username: "AncDam",
+      password: await argon2.hash("test1234"),
+    });
+
     for (let i = 0; i < 10; i++) {
       users.push({
         lastname: faker.person.lastName(),
@@ -117,6 +125,7 @@ const sequelizeDebug = debug("migration:sequelize");
         password: await argon2.hash("test1234"),
       });
     }
+
     const createdUsers = await User.bulkCreate(users);
 
     sequelizeDebug("✅ Users created successfully.");

@@ -54,4 +54,5 @@ export class UserRole extends Model<UserRoleAttributes, UserRoleCreation> implem
 
   // Associations
   // User and Role associations are defined in their respective models
+
 }

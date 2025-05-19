@@ -1,0 +1,8 @@
+### login - USER
+POST http://localhost:3000/api/auth/login HTTP/1.1
+content-type: application/json
+
+{
+  "email": "test@mail.io",
+  "password": "test1234"
+}

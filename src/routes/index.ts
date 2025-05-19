@@ -1,8 +1,10 @@
 import { Router } from 'express';
-import { apiRouter } from './apiRouter';
+import { testController } from 'controllers/testController';
+import { authRouter } from './api/authRouter';
 
-export const router = Router();
+export const apiRouter = Router();
 
-router.use('/api', apiRouter);
+apiRouter.get('/test', testController.getTest);
+apiRouter.use('/auth', authRouter);
 
 

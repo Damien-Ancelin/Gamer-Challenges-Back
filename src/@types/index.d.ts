@@ -17,16 +17,12 @@ export interface AccessToken {
 
 export interface RefreshTokenPayload {
   id: number,
-  role: string,
-  username: string,
   jti: string,
 };
 
 export interface RefreshToken {
   id: number,
-  role: string,
-  username: string,
+  jti: string,
   iat: number,
   exp: number,
-  jti: string,
 }

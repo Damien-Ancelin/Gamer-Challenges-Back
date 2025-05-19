@@ -3,8 +3,9 @@ import { Router } from 'express';
 export const authRouter = Router();
 
 import { authController } from '../../controllers/authController';
+import { controllerWrapper } from 'middlewares/controllerWrapper';
 
-authRouter.post('/login', authController.login);
+authRouter.post('/login', controllerWrapper(authController.login));
 authRouter.post('/register', authController.register);
 authRouter.post('/logout', authController.logout);
 authRouter.post('/refresh', authController.refresh);

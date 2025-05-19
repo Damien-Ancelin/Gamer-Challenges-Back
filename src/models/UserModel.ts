@@ -1,5 +1,5 @@
 import { Optional } from 'sequelize';
-import { Table, Column, Model, DataType, CreatedAt, UpdatedAt, BelongsToMany, HasMany } from 'sequelize-typescript';
+import { Table, Column, Model, DataType, CreatedAt, UpdatedAt, BelongsToMany, HasMany, AfterCreate } from 'sequelize-typescript';
 
 import { Role } from './RoleModel';
 import { UserRole } from './UserRoleModel';
@@ -112,7 +112,15 @@ export class User extends Model<UserAttributes, UserCreationAttributes> implemen
   // This means that a user can review multiple challenges
   @HasMany((): typeof ChallengeReview => ChallengeReview)
   declare challengeReviews?: ChallengeReview[];
-
+  
+  // Hook to create a default UserRole after a User is created
+  @AfterCreate
+  static async assignDefaultRole(user: User) {
+    await UserRole.create({
+      userId: user.id,
+      roleId: 1, // Default role ID for "user"
+    });
+  }
 
   // instance methods
   generateAccessToken(): string {
@@ -129,8 +137,6 @@ export class User extends Model<UserAttributes, UserCreationAttributes> implemen
   generateRefreshToken(): string {
     const payload = {
       id: this.id,
-      role: this.roles ? this.roles[0].name : 'user',
-      username: this.username,
       jti: uuidv4(),
     };
     // ! AJOUTER LE JTI DANS REDIS !

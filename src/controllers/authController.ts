@@ -8,7 +8,7 @@ import { User } from "models/UserModel";
 const authDebug = debug("app:authController");
 
 export const authController = {
-  login: async (req: Request, res: Response) => {
+  async login(req: Request, res: Response){
     authDebug("🧔 authController: api/auth/login");
     const errorMessage = "Couple email/mot de passe incorrect";
 
@@ -24,39 +24,57 @@ export const authController = {
 
       authDebug("Validation error:", validationErrors);
 
-      return res
-        .status(400)
-        .json({
-          sucess: false,
-          message: errorMessage,
-          error: validationErrors,
-        });
+      res.status(400).json({
+        success: false,
+        message: errorMessage,
+        error: validationErrors,
+      });
+      return;
     }
 
     const { email, password } = req.body;
 
-    const user = await User.findOne({ where: { email }});
+    const user = await User.findOne({ where: { email } });
 
     if (!user) {
       authDebug("❌ User not found");
-      return res.status(401).json({ success: false, message: errorMessage });
+      res.status(401).json({ success: false, message: errorMessage });
+      return;
     }
 
     const isPasswordValid = await argon2.verify(user.password, password);
 
     if (!isPasswordValid) {
       authDebug("❌ Invalid password");
-      return res.status(401).json({ success: false, message: errorMessage });
+      res.status(401).json({ success: false, message: errorMessage });
+      return;
     }
-
+    
+    authDebug("✔ User authenticated successfully");
     const AccessToken = user.generateAccessToken();
     const RefreshToken = user.generateRefreshToken();
 
-    authDebug("✔ User authenticated successfully");
-    authDebug("Access Token:", AccessToken);
-    authDebug("Refresh Token:", RefreshToken);
+    res.cookie("refreshToken", RefreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+      path: "/api/auth/refresh-token",
+    });
 
-    
+    res.cookie("accessToken", AccessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 10 * 60 * 1000,
+      // ! Pensez a définir des routes !
+      path: "/",
+    });
+
+    res.status(200).json({
+      success: true,
+      message: 'Utilisateur connecté avec succès',
+    });
   },
 
   register: (_req: Request, _res: Response) => {
