@@ -1,6 +1,8 @@
 import { Router } from 'express';
-import { testController } from '../controllers/testController';
+import { apiRouter } from './apiRouter';
 
 export const router = Router();
 
-router.get('/test', testController.getTest);
+router.use('/api', apiRouter);
+
+

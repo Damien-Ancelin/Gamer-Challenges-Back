@@ -32,11 +32,15 @@ Gamer Challenges est une plateforme dédiée aux joueurs souhaitant repousser le
    POSTGRES_PORT=5432
    POSTGRES_HOST=container-postgres
    API_PORT=3000
+   FRONTEND_URL=http://url:port
+   API_URL=http://url:port
    REDIS_PORT=6379
    REDIS_HOST=container-redis
    REDIS_URL=redis://container_redis_name:redis_port
-   FRONTEND_URL=http://url:port
-   API_URL=http://url:port
+   JWT_ACCESS_SECRET=your_jwt_access_token_secret
+   JWT_REFRESH_SECRET=your_jwt_refresh_token_secret
+   JWT_ACCESS_EXPIRATION_TIME=10minutes
+   JWT_REFRESH_EXPIRATION_TIME=7days
    ```
 
 4. Installez les dépendances :

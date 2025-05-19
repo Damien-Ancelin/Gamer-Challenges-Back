@@ -8,6 +8,9 @@ import { Challenge } from './ChallengeModel';
 import { ChallengeReview } from './ChallengeReviewModel';
 import { ParticipationReview } from './ParticipationReviewModel';
 
+import { tokenService } from 'services/tokenService';
+import { v4 as uuidv4 } from 'uuid';
+
 interface UserAttributes {
   id: number;
   lastname: string;
@@ -109,4 +112,28 @@ export class User extends Model<UserAttributes, UserCreationAttributes> implemen
   // This means that a user can review multiple challenges
   @HasMany((): typeof ChallengeReview => ChallengeReview)
   declare challengeReviews?: ChallengeReview[];
+
+
+  // instance methods
+  generateAccessToken(): string {
+    const payload = {
+      id: this.id,
+      role: this.roles ? this.roles[0].name : 'user',
+      username: this.username,
+      jti: uuidv4(),
+    };
+
+    return tokenService.generateToken(payload);
+  }
+
+  generateRefreshToken(): string {
+    const payload = {
+      id: this.id,
+      role: this.roles ? this.roles[0].name : 'user',
+      username: this.username,
+      jti: uuidv4(),
+    };
+    // ! AJOUTER LE JTI DANS REDIS !
+    return tokenService.generateRefreshToken(payload);
+  }
 }
