@@ -278,7 +278,7 @@ const sequelizeDebug = debug("migration:sequelize");
       const randomLevel = levels[Math.floor(Math.random() * levels.length)];
       const randomGame = games[Math.floor(Math.random() * games.length)];
       challenges.push({
-        name: faker.lorem.sentence(),
+        name: randomGame.name + " " + randomCategory.name,
         challengeImage: faker.image.url(),
         description: faker.lorem.paragraph(),
         rules: faker.lorem.paragraph(),

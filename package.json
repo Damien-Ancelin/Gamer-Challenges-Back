@@ -23,7 +23,8 @@
     "docker:dev:restart": "docker compose -f docker-compose.dev.yml down && docker compose -f docker-compose.dev.yml up -d",
     "docker:dev:clean-restart": "docker compose -f docker-compose.dev.yml down -v --remove-orphans && docker compose -f docker-compose.dev.yml up -d --build",
     "db:create:dev": "DEBUG=migration:* POSTGRES_HOST=localhost tsx src/migrations/createTables.ts",
-    "db:seeding:dev": "DEBUG=migration:* POSTGRES_HOST=localhost tsx src/migrations/seeding.ts"
+    "db:seeding:dev": "DEBUG=migration:* POSTGRES_HOST=localhost tsx src/migrations/seeding.ts",
+    "db:reset:dev": "DEBUG=migration:* npm run db:create:dev && npm run db:seeding:dev"
   },
   "repository": {
     "type": "git",
