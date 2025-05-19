@@ -16,10 +16,19 @@ interface ChallengeReviewAttributes {
 export interface ChallengeReviewCreation
   extends Optional<ChallengeReviewAttributes, 'id' | 'createdAt' | 'updatedAt'> {}
 
+export interface ChallengeReviewUpdate
+  extends Optional<ChallengeReviewAttributes, 'id' | 'createdAt' | 'updatedAt'> {}
+
 @Table({
   tableName: "challenge_review",
   modelName: "ChallengeReview",
   timestamps: true,
+  indexes: [
+    {
+      unique: true,
+      fields: ['userId', 'ChallengeId'], // Contrainte unique sur userId et ChallengeId
+    },
+  ],
 })
 
 export class ChallengeReview extends Model<ChallengeReviewAttributes, ChallengeReviewCreation> implements ChallengeReviewAttributes {

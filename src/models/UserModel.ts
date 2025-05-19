@@ -23,6 +23,9 @@ interface UserAttributes {
 export interface UserCreationAttributes
   extends Optional<UserAttributes, 'id' | 'createdAt' | 'updatedAt'> {}
 
+export interface UserUpdateAttributes
+  extends Optional<UserAttributes, 'id' | 'createdAt' | 'updatedAt'> {}
+
 @Table({
   tableName: "app_user",
   modelName: "User",

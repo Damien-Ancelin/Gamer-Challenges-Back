@@ -26,6 +26,9 @@ interface ChallengeAttributes {
 export interface ChallengeCreation
   extends Optional<ChallengeAttributes, 'id' | 'createdAt' | 'updatedAt'> {}
 
+export interface ChallengeUpdate
+  extends Optional<ChallengeAttributes, 'id' | 'createdAt' | 'updatedAt'> {}
+
 @Table({
   tableName: "challenge",
   modelName: "Challenge",

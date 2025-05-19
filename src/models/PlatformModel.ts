@@ -15,6 +15,9 @@ interface PlatformAttributes {
 export interface PlatformCreation
   extends Optional<PlatformAttributes, 'id' | 'createdAt' | 'updatedAt'> {}
 
+export interface PlatformUpdate
+  extends Optional<PlatformAttributes, 'id' | 'createdAt' | 'updatedAt'> {}
+
 @Table({
   tableName: "platform",
   modelName: "Platform",

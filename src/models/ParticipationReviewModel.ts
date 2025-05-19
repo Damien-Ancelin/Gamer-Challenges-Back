@@ -16,11 +16,20 @@ interface ParticipationReviewAttributes {
 export interface ParticipationReviewCreation
   extends Optional<ParticipationReviewAttributes, 'id' | 'createdAt' | 'updatedAt'> {}
 
-@Table({
-  tableName: "participation_review",
-  modelName: "ParticipationReview",
-  timestamps: true,
-})
+export interface ParticipationReviewUpdate
+  extends Optional<ParticipationReviewAttributes, 'id' | 'createdAt' | 'updatedAt'> {}
+
+  @Table({
+    tableName: "participation_review",
+    modelName: "ParticipationReview",
+    timestamps: true,
+    indexes: [
+      {
+        unique: true,
+        fields: ['userId', 'ParticipationId'], // Contrainte unique sur userId et ParticipationId
+      },
+    ],
+  })
 
 export class ParticipationReview extends Model<ParticipationReviewAttributes, ParticipationReviewCreation> implements ParticipationReviewAttributes {
   @Column({

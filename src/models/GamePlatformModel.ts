@@ -15,6 +15,9 @@ interface GamePlatformAttributes {
 export interface GamePlatformCreation
   extends Optional<GamePlatformAttributes, 'id' | 'createdAt' | 'updatedAt'> {}
 
+export interface GamePlatformUpdate
+  extends Optional<GamePlatformAttributes, 'id' | 'createdAt' | 'updatedAt'> {}
+
 @Table({
   tableName: "game_platform",
   modelName: "GamePlatform",

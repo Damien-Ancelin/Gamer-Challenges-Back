@@ -15,6 +15,9 @@ interface UserRoleAttributes {
 export interface UserRoleCreation
   extends Optional<UserRoleAttributes, 'id' | 'createdAt' | 'updatedAt'> {}
 
+export interface UserRoleUpdate
+  extends Optional<UserRoleAttributes, 'id' | 'createdAt' | 'updatedAt'> {}
+
 @Table({
   tableName: 'user_role',
   modelName: 'UserRole',

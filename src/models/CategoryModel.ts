@@ -13,6 +13,9 @@ interface CategoryAttributes {
 export interface CategoryCreation
   extends Optional<CategoryAttributes, 'id' | 'createdAt' | 'updatedAt'> {}
 
+export interface CategoryUpdate
+  extends Optional<CategoryAttributes, 'id' | 'createdAt' | 'updatedAt'> {}
+
 @Table({
   tableName: 'category',
   modelName: 'Category',
