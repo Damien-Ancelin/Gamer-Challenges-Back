@@ -27,7 +27,7 @@ const sequelize = new Sequelize({
   port: Number(process.env.POSTGRES_PORT),
   models: [User, Role, UserRole, Participation, Challenge, ChallengeReview, ParticipationReview, Category, Level, Game, Platform, GamePlatform],
   dialect: 'postgres',
-  logging: process.env.NODE_ENV !== 'production' ? false : false,
+  logging: process.env.NODE_ENV !== 'production' ? console.log : false,
   define: {
     underscored: true
   },

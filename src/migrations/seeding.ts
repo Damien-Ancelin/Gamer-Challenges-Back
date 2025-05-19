@@ -301,7 +301,7 @@ const sequelizeDebug = debug("migration:sequelize");
         videoLink: faker.internet.url(),
         isValidated: Math.random() < 0.5,
         userId: randomUser.id,
-        ChallengeId: randomChallenge.id,
+        challengeId: randomChallenge.id,
      });
     }
     const createdParticipations = await Participation.bulkCreate(participations);
@@ -315,7 +315,7 @@ const sequelizeDebug = debug("migration:sequelize");
         content: faker.lorem.paragraph(),
         rating: Math.floor(Math.random() * 5) + 1,
         userId: randomUser.id,
-        ChallengeId: randomChallenge.id,
+        challengeId: randomChallenge.id,
       });
     }
     await ChallengeReview.bulkCreate(challengeReviews);
@@ -329,7 +329,7 @@ const sequelizeDebug = debug("migration:sequelize");
         content: faker.lorem.paragraph(),
         rating: Math.floor(Math.random() * 5) + 1,
         userId: randomUser.id,
-        ParticipationId: randomParticipation.id,
+        participationId: randomParticipation.id,
       });
     }
     await ParticipationReview.bulkCreate(participationReviews);

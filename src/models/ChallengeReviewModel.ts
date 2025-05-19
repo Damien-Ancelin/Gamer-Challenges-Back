@@ -8,7 +8,7 @@ interface ChallengeReviewAttributes {
   id: number;
   rating: number;
   userId: number;
-  ChallengeId: number;
+  challengeId: number;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -23,12 +23,12 @@ export interface ChallengeReviewUpdate
   tableName: "challenge_review",
   modelName: "ChallengeReview",
   timestamps: true,
-  indexes: [
-    {
-      unique: true,
-      fields: ['userId', 'ChallengeId'], // Contrainte unique sur userId et ChallengeId
-    },
-  ],
+  // indexes: [
+  //   {
+  //     unique: true,
+  //     fields: ['userId', 'challengeId'], // Contrainte unique sur userId et ChallengeId
+  //   },
+  // ],
 })
 
 export class ChallengeReview extends Model<ChallengeReviewAttributes, ChallengeReviewCreation> implements ChallengeReviewAttributes {
@@ -61,7 +61,7 @@ export class ChallengeReview extends Model<ChallengeReviewAttributes, ChallengeR
       type: DataType.INTEGER,
       allowNull: false,
     })
-    declare ChallengeId: number
+    declare challengeId: number
 
   @CreatedAt
   declare createdAt: Date;

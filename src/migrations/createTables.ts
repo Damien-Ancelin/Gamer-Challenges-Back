@@ -5,7 +5,6 @@ import sequelize from "../configs/sequelize";
 
 const sequelizeDebug = debug("migration:sequelize");
 
-
 (async () => {
   sequelizeDebug("🔄 Starting database sync...");
   try {

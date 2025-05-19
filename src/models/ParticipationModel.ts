@@ -10,7 +10,7 @@ interface ParticipationAttributes {
   videoLink?: string | null;
   isValidated: boolean;
   userId: number;
-  ChallengeId: number;
+  challengeId: number;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -60,7 +60,7 @@ export class Participation extends Model<ParticipationAttributes, ParticipationC
       type: DataType.INTEGER,
       allowNull: false,
     })
-    declare ChallengeId: number
+    declare challengeId: number
 
   @CreatedAt
     declare createdAt: Date;

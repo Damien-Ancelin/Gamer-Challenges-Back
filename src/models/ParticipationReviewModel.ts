@@ -8,7 +8,7 @@ interface ParticipationReviewAttributes {
   id: number;
   rating: number;
   userId: number;
-  ParticipationId: number;
+  participationId: number;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -23,12 +23,12 @@ export interface ParticipationReviewUpdate
     tableName: "participation_review",
     modelName: "ParticipationReview",
     timestamps: true,
-    indexes: [
-      {
-        unique: true,
-        fields: ['userId', 'ParticipationId'], // Contrainte unique sur userId et ParticipationId
-      },
-    ],
+    // indexes: [
+    //   {
+    //     unique: true,
+    //     fields: ['userId', 'participationId'], // Contrainte unique sur userId et ParticipationId
+    //   },
+    // ],
   })
 
 export class ParticipationReview extends Model<ParticipationReviewAttributes, ParticipationReviewCreation> implements ParticipationReviewAttributes {
@@ -50,18 +50,18 @@ export class ParticipationReview extends Model<ParticipationReviewAttributes, Pa
   declare rating: number;
 
   @ForeignKey(() => User)
-      @Column({
-        type: DataType.INTEGER,
-        allowNull: false,
-      })
-      declare userId: number
+    @Column({
+      type: DataType.INTEGER,
+      allowNull: false,
+    })
+    declare userId: number
   
   @ForeignKey(() => Participation)
     @Column({
       type: DataType.INTEGER,
       allowNull: false,
     })
-    declare ParticipationId: number
+    declare participationId: number
 
   @CreatedAt
   declare createdAt: Date;
