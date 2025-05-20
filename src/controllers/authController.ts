@@ -51,16 +51,8 @@ export const authController = {
     }
     
     authDebug("✔ User authenticated successfully");
-    const AccessToken = user.generateAccessToken();
-    const RefreshToken = user.generateRefreshToken();
-
-    res.cookie("refreshToken", RefreshToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-      path: "/api/auth/refresh-token",
-    });
+    const AccessToken = await user.generateAccessToken();
+    const RefreshToken = await user.generateRefreshToken();
 
     res.cookie("accessToken", AccessToken, {
       httpOnly: true,
@@ -69,6 +61,14 @@ export const authController = {
       maxAge: 10 * 60 * 1000,
       // ! Pensez a définir des routes !
       path: "/",
+    });
+
+    res.cookie("refreshToken", RefreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+      path: "/api/auth/refresh-token",
     });
 
     res.status(200).json({
@@ -83,7 +83,8 @@ export const authController = {
   logout: (_req: Request, _res: Response) => {
     authDebug("🧔 authController: api/auth/logout");
   },
-  refresh: (_req: Request, _res: Response) => {
+  refresh: (req: Request, _res: Response) => {
     authDebug("🔄 authController: api/auth/refresh");
+    authDebug(req.cookies);
   },
 };
