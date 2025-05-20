@@ -2,7 +2,7 @@ import debug from "debug";
 
 import type { NextFunction, Request, Response } from "express";
 
-const errorHandlerDebug = debug("app:errorHandler");
+const errorHandlerDebug = debug("error:errorHandler");
 
 export function errorHandler(error: Error, _req: Request, res: Response, _next: NextFunction) {
   errorHandlerDebug("❌ Error caught by global handler:", error);

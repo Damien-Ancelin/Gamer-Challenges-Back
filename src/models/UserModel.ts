@@ -10,6 +10,7 @@ import { ParticipationReview } from './ParticipationReviewModel';
 
 import { tokenService } from 'services/tokenService';
 import { v4 as uuidv4 } from 'uuid';
+import { redisService } from 'services/redisService';
 
 interface UserAttributes {
   id: number;
@@ -123,23 +124,31 @@ export class User extends Model<UserAttributes, UserCreationAttributes> implemen
   }
 
   // instance methods
-  generateAccessToken(): string {
+  async generateAccessToken(): Promise<string> {
     const payload = {
       id: this.id,
       role: this.roles ? this.roles[0].name : 'user',
       username: this.username,
       jti: uuidv4(),
     };
+    const whitelistSuccess = await redisService.setAccessWhitelist(this.id.toString(), payload.jti, 60 * 10);
 
-    return tokenService.generateToken(payload);
+    if (!whitelistSuccess) {
+      throw new Error("❌ Failed to store token in Redis whitelist");
+    }
+
+    return tokenService.generateAccessToken(payload);
   }
 
-  generateRefreshToken(): string {
+  async generateRefreshToken(): Promise<string> {
     const payload = {
       id: this.id,
       jti: uuidv4(),
     };
-    // ! AJOUTER LE JTI DANS REDIS !
+    const whitelistSuccess = await redisService.setRefreshWhitelist(`whitelist:refresh:${this.id.toString()}`, payload.jti, 60 * 60 * 24 * 7);
+    if (!whitelistSuccess) {
+      throw new Error("❌ Failed to store token in Redis whitelist");
+    }
     return tokenService.generateRefreshToken(payload);
   }
 }

@@ -17,6 +17,7 @@ import { GamePlatform } from "models/GamePlatformModel";
 import { Challenge } from "models/ChallengeModel";
 import { ChallengeReview } from "models/ChallengeReviewModel";
 import { ParticipationReview } from "models/ParticipationReviewModel";
+import redisClient from "configs/redis";
 
 const sequelizeDebug = debug("migration:sequelize");
 
@@ -347,6 +348,7 @@ const sequelizeDebug = debug("migration:sequelize");
   } catch (error) {
     sequelizeDebug("❌ Error seeding database:", (error as Error).message);
   } finally {
+    await redisClient.quit();
     await sequelize.close();
   }
 })();

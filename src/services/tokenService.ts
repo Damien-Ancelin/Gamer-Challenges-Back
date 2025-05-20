@@ -10,7 +10,7 @@ const JWT_ACCESS_EXPIRATION: string = process.env.JWT_ACCESS_EXPIRATION || "7m";
 const JWT_REFRESH_EXPIRATION: string = process.env.JWT_REFRESH_EXPIRATION || "7d";
 
 export const tokenService = {
-  generateToken: (payload: AccessTokenPayload): string => {
+  generateAccessToken: (payload: AccessTokenPayload): string => {
     jwtDebug("Generating JWT token");
     try {
       return jwt.sign(payload, JWT_ACCESS_SECRET, {
@@ -22,7 +22,7 @@ export const tokenService = {
     }
   },
 
-  verifyToken: (token: string): AccessToken | null => {
+  verifyAccessToken: (token: string): AccessToken | null => {
     jwtDebug("Verifying JWT token");
     try {
       const decoded = jwt.verify(token, JWT_ACCESS_SECRET);

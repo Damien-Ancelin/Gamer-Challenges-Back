@@ -2,7 +2,7 @@ import debug from "debug";
 
 import type { NextFunction, Request, Response } from "express";
 
-const wrapperDebug = debug("app:controllerWrapper");
+const wrapperDebug = debug("error:controllerWrapper");
 
 type MiddlewareFunction = (
   req: Request,

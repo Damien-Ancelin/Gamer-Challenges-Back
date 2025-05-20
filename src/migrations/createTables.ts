@@ -2,6 +2,7 @@ import "dotenv/config";
 import debug from "debug";
 
 import sequelize from "../configs/sequelize";
+import redisClient from "configs/redis";
 
 const sequelizeDebug = debug("migration:sequelize");
 
@@ -20,6 +21,8 @@ const sequelizeDebug = debug("migration:sequelize");
   } catch (error) {
     sequelizeDebug("❌ Error syncing database:", (error as Error).message);
   } finally {
+    sequelizeDebug(process.env.REDIS_URL);
+    await redisClient.quit();
     await sequelize.close();
   }
 })();
