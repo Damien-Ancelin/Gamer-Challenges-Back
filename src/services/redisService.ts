@@ -4,12 +4,22 @@ import redisClient from "../configs/redis";
 const redisDebug = debug("service:redisService");
 
 export const redisService = {
+
+  // ? Parse the key to get the last number
+  parseKey(key: string | number): string {
+    if (typeof key === "number") return key.toString();
+  
+    const match = key.match(/(\d+)$/);
+    return match ? match[1] : key;
+  },
+
   // * Whitelist Token
   
   // Access Token
-  async setAccessWhitelist(key: string, value: string, expirationInSeconds: number) {
+  async setAccessWhitelist(key: number | string, value: string, expirationInSeconds: number): Promise<boolean> {
     try {        
-      const setResult = await redisClient.set(`whitelist:access:${key}`, value, { EX: expirationInSeconds });
+      const keyString = this.parseKey(key);
+      const setResult = await redisClient.set(`whitelist:access:${keyString}`, value, { EX: expirationInSeconds });
       if (setResult === "OK") {
         redisDebug("✔ Access whitelist key set successfully");
         return true; // Key set successfully
@@ -22,9 +32,10 @@ export const redisService = {
       throw new Error("Failed to set access whitelist key");
     }
   },
-  async getAccessWhitelist(key: string): Promise<string | null> {
+  async getAccessWhitelist(key: string | number): Promise<string | null> {
     try {
-      const getResult = await redisClient.get(`whitelist:access:${key}`);
+      const keyString = this.parseKey(key);
+      const getResult = await redisClient.get(`whitelist:access:${keyString}`);
       if (getResult === null) {
         redisDebug("✔ Access whitelist key not found");
         return null; // Key not found
@@ -36,9 +47,11 @@ export const redisService = {
       throw new Error("Failed to get access whitelist key");
     }
   },
-  async deleteAccessWhitelist(key: string): Promise<number>{
+
+  async deleteAccessWhitelist(key: string | number): Promise<number>{
+    const keyString = this.parseKey(key);
     try {
-      const delResult = await redisClient.del(`whitelist:access:${key}`);
+      const delResult = await redisClient.del(`whitelist:access:${keyString}`);
       if (delResult === 0) {
         redisDebug("✔ Access whitelist key not found");
         return 0; // Key not found
@@ -52,9 +65,10 @@ export const redisService = {
   },
 
   // Refresh Token
-  async setRefreshWhitelist(key: string, value: string, expirationInSeconds: number) {
+  async setRefreshWhitelist(key: number | string, value: string, expirationInSeconds: number) {
     try {
-      const setResult = await redisClient.set(`whitelist:refresh:${key}`, value, { EX: expirationInSeconds });
+      const keyString = this.parseKey(key);
+      const setResult = await redisClient.set(`whitelist:refresh:${keyString}`, value, { EX: expirationInSeconds });
       if (setResult === "OK") {
         redisDebug("✔ Refresh token key set successfully");
         return true; // Key set successfully
@@ -67,9 +81,10 @@ export const redisService = {
       throw new Error("Failed to set refresh token key");
     }
   },
-  async getRefreshWhitelist(key: string): Promise<string | null> {
+  async getRefreshWhitelist(key: string | number): Promise<string | null> {
+    const keyString = this.parseKey(key);
     try {
-      const getResult = await redisClient.get(`whitelist:refresh:${key}`);
+      const getResult = await redisClient.get(`whitelist:refresh:${keyString}`);
       if (getResult === null) {
         redisDebug("✔ Refresh token key not found");
         return null; // Key not found
@@ -81,9 +96,10 @@ export const redisService = {
       throw new Error("Failed to get refresh token key");
     }
   },
-  async deleteRefreshWhitelist(key: string): Promise<number> {
+  async deleteRefreshWhitelist(key: string | number): Promise<number> {
+    const keyString = this.parseKey(key);
     try {
-      const delResult = await redisClient.del(`whitelist:refresh:${key}`);
+      const delResult = await redisClient.del(`whitelist:refresh:${keyString}`);
       if (delResult === 0) {
         redisDebug("✔ Refresh token key not found");
         return 0; // Key not found
@@ -97,18 +113,15 @@ export const redisService = {
   },
 
   // * Blacklist Token
-  async setTokenBlacklist(key: string, value: string, expirationInSeconds: number) {
+  async setTokenBlacklist(key: number | string, value: string, expirationInSeconds: number) {
     try {
-      if (!key.includes("access") || !key.includes("refresh")) {
-        redisDebug("❌ Invalid key format");
-        throw new Error("Invalid key format");
-      }
+      const keyString = this.parseKey(key);
 
-      const setResult = await redisClient.set(`blacklist:token:${key}`, value, { EX: expirationInSeconds });
+      const setResult = await redisClient.set(`blacklist:token:${keyString}`, value, { EX: expirationInSeconds });
 
       if (setResult === "OK") {
-        await redisService.deleteRefreshWhitelist(key);
-        await redisService.deleteAccessWhitelist(key);
+        await this.deleteRefreshWhitelist(keyString);
+        await this.deleteAccessWhitelist(keyString);
         redisDebug("✔ Access blacklist key set successfully");
         return true; // Key set successfully
 
@@ -122,9 +135,11 @@ export const redisService = {
     }
   },
 
-  async getTokenBlacklist(key: string): Promise<string | null> {
+  async getTokenBlacklist(key: string | number): Promise<string | null> {
     try {
-      const getResult = await redisClient.get(`blacklist:token:${key}`);
+      const keyString = this.parseKey(key);
+
+      const getResult = await redisClient.get(`blacklist:token:${keyString}`);
       if (getResult === null) {
         redisDebug("✔ Access blacklist key not found");
         return null; // Key not found
@@ -137,9 +152,11 @@ export const redisService = {
     }
   },
 
-  async deleteTokenBlacklist(key: string): Promise<number> {
+  async deleteTokenBlacklist(key: string | number): Promise<number> {
     try {
-      const delResult = await redisClient.del(`blacklist:token:${key}`);
+      const keyString = this.parseKey(key);
+
+      const delResult = await redisClient.del(`blacklist:token:${keyString}`);
       if (delResult === 0) {
         redisDebug("✔ Access blacklist key not found");
         return 0; // Key not found

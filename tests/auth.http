@@ -6,3 +6,9 @@ content-type: application/json
   "email": "test@mail.io",
   "password": "test1234"
 }
+
+### Refresh Token
+## Test with insomnia
+POST http://localhost:3000/api/auth/refresh-token HTTP/1.1
+Cookie: 
+

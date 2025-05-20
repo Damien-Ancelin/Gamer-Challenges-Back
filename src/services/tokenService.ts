@@ -11,7 +11,7 @@ const JWT_REFRESH_EXPIRATION: string = process.env.JWT_REFRESH_EXPIRATION || "7d
 
 export const tokenService = {
   generateAccessToken: (payload: AccessTokenPayload): string => {
-    jwtDebug("Generating JWT token");
+    jwtDebug("Generating JWT Access token");
     try {
       return jwt.sign(payload, JWT_ACCESS_SECRET, {
         expiresIn: JWT_ACCESS_EXPIRATION as jwt.SignOptions["expiresIn"],
@@ -23,7 +23,7 @@ export const tokenService = {
   },
 
   verifyAccessToken: (token: string): AccessToken | null => {
-    jwtDebug("Verifying JWT token");
+    jwtDebug("Verifying JWT Access token");
     try {
       const decoded = jwt.verify(token, JWT_ACCESS_SECRET);
 

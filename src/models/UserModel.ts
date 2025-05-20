@@ -131,7 +131,7 @@ export class User extends Model<UserAttributes, UserCreationAttributes> implemen
       username: this.username,
       jti: uuidv4(),
     };
-    const whitelistSuccess = await redisService.setAccessWhitelist(this.id.toString(), payload.jti, 60 * 10);
+    const whitelistSuccess = await redisService.setAccessWhitelist(this.id, payload.jti, 60 * 10);
 
     if (!whitelistSuccess) {
       throw new Error("❌ Failed to store token in Redis whitelist");
@@ -145,7 +145,7 @@ export class User extends Model<UserAttributes, UserCreationAttributes> implemen
       id: this.id,
       jti: uuidv4(),
     };
-    const whitelistSuccess = await redisService.setRefreshWhitelist(`whitelist:refresh:${this.id.toString()}`, payload.jti, 60 * 60 * 24 * 7);
+    const whitelistSuccess = await redisService.setRefreshWhitelist(this.id, payload.jti, 60 * 60 * 24 * 7);
     if (!whitelistSuccess) {
       throw new Error("❌ Failed to store token in Redis whitelist");
     }
