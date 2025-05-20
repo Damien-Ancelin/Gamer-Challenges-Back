@@ -11,6 +11,8 @@ export const authController = {
   async login(req: Request, res: Response){
     authDebug("🧔 authController: api/auth/login");
     const errorMessage = "Couple email/mot de passe incorrect";
+    console.log("req.body", req.body);
+    console.log("req.cookies", req.cookies);
 
     const { error } = loginSchema.validate(req.body, {
       abortEarly: false,
@@ -27,7 +29,7 @@ export const authController = {
       res.status(400).json({
         success: false,
         message: errorMessage,
-        error: validationErrors,
+        validationErrors: validationErrors,
       });
       return;
     }
@@ -68,6 +70,7 @@ export const authController = {
       secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
       maxAge: 7 * 24 * 60 * 60 * 1000,
+      // Token send to the client but usable only on api/auth/refresh-token and no visible in the browser
       path: "/api/auth/refresh-token",
     });
 
