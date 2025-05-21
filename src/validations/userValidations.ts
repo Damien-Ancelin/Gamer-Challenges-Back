@@ -6,8 +6,8 @@ export const loginSchema = Joi.object({
 });
 
 export const registerSchema = Joi.object({
-  lastname: Joi.string().required(),
-  firstname: Joi.string().required(),
+  lastname: Joi.string().min(3).required(),
+  firstname: Joi.string().min(3).required(),
   email: Joi.string()
     .email()
     .pattern(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/)
@@ -17,11 +17,11 @@ export const registerSchema = Joi.object({
       "any.required": "L'email est obligatoire",
       "string.empty": "L'email ne peut pas être vide",
     }),
-  username: Joi.string().alphanum().min(3).max(30).required(),
+  username: Joi.string().min(3).max(30).required(),
   password: Joi.string()
   .min(8)
   .max(128)
-  .pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/)
+  .pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&_])[A-Za-z\d@$!%*?&_]{8,}$/)
   .required()
   .messages({
     "string.pattern.base": "Le mot de passe doit contenir au moins une majuscule, une minuscule, un chiffre et un caractère spécial.",

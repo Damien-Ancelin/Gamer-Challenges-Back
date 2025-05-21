@@ -3,7 +3,7 @@ import debug from "debug";
 import argon2 from "argon2";
 
 import { User } from "models/UserModel";
-import { loginSchema } from "../validations/userValidations";
+import { loginSchema, registerSchema } from "../validations/userValidations";
 import { tokenService } from "services/tokenService";
 import { redisService } from "services/redisService";
 import { accessTokenCookieOptions, refreshTokenCookieOptions } from "configs/cookie";
@@ -69,8 +69,73 @@ export const authController = {
     });
   },
 
-  async register(_req: Request, _res: Response){
+  async register(req: Request, res: Response){
     authDebug("🧔 authController: api/auth/register");
+
+    const errorMessage = "Une erreur est survenue lors de l'inscription";
+
+    const { error } = registerSchema.validate(req.body, {
+      abortEarly: false,
+      stripUnknown: true,
+    });
+
+    if (error) {
+      const validationErrors = error.details.map((ErrorDetail) => ({
+        errorMessage: ErrorDetail.message,
+      }));
+
+      authDebug("Validation error:", validationErrors);
+
+      res.status(400).json({
+        success: false,
+        message: errorMessage,
+        validationErrors: validationErrors,
+      });
+      return;
+    }
+
+    const { firstname, lastname, email, username, password } = req.body;
+
+    const existingEmail = await User.findOne({ where: { email } });
+    if (existingEmail) {
+      authDebug("❌ Email already exists");
+      res.status(409).json({ success: false, message: "L'utilisateur existe déjà" });
+      return;
+    };
+
+    const existingUsername = await User.findOne({ where: { username } });
+    if (existingUsername) {
+      authDebug("❌ Username already exists");
+      res.status(409).json({ success: false, message: "Le nom d'utilisateur existe déjà" });
+      return;
+    };
+
+    const hashedPassword = await argon2.hash(password);
+
+    const newUser = await User.create({
+      firstname,
+      lastname,
+      email,
+      username,
+      password: hashedPassword,
+    });
+
+    authDebug("✔ User created successfully");
+
+    const AccessToken = await newUser.generateAccessToken();
+    const RefreshToken = await newUser.generateRefreshToken();
+    authDebug("✔ Tokens generated successfully");
+
+    // ? Création des cookies
+    res.cookie("accessToken", AccessToken, accessTokenCookieOptions);
+    res.cookie("refreshToken", RefreshToken, refreshTokenCookieOptions);
+    authDebug("✔ Cookies created successfully");
+
+    res.status(201).json({
+      success: true,
+      message: "Utilisateur créé avec succès"
+    });
+    return ;
   },
 
   async logout(req: Request, res: Response){

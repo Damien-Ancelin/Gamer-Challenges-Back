@@ -1,4 +1,4 @@
-### login - USER
+### login - SUCCESS
 POST http://localhost:3000/api/auth/login HTTP/1.1
 content-type: application/json
 
@@ -7,12 +7,47 @@ content-type: application/json
   "password": "test1234"
 }
 
+### register - SUCCESS
+POST http://localhost:3000/api/auth/register HTTP/1.1
+content-type: application/json
+
+{
+	"firstname": "Jason",
+	"lastname": "Toison",
+  "email": "testdeur@mail.io",
+	"username":	"Jasd_Toi",
+  "password": "Test_1234"
+}
+
+### register with existing email - ERROR !
+POST http://localhost:3000/api/auth/register HTTP/1.1
+content-type: application/json
+
+{
+  "firstname": "Jason",
+  "lastname": "Toison",
+  "email": "test@mail.io",
+  "username": "Jasd_Toi",
+  "password": "Test_1234"
+}
+
+### register with existing username - ERROR !
+POST http://localhost:3000/api/auth/register HTTP/1.1
+content-type: application/json
+
+{
+  "firstname": "Jason",
+  "lastname": "Toison",
+  "email": "letestdelemail@mail.io",
+  "username": "AncDam",
+  "password": "Test_1234"
+}
+
 ### Refresh Token
-## Test with insomnia
+## + Test with insomnia
 POST http://localhost:3000/api/auth/refresh-token HTTP/1.1
-Cookie: accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6InVzZXIiLCJ1c2VybmFtZSI6IkFuY0RhbSIsImp0aSI6IjI0ZTVlMjcwLTM4YzItNDRjZC04MzAyLTVlMTYxYTg2MTA1NCIsImlhdCI6MTc0NzgxODkxMSwiZXhwIjoxNzQ3ODE5MzMxfQ.bj6TbJwtPkmvWQ6AvbskCNxO2odgwwqjyZ5jOTF1Nbw;refreshToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwianRpIjoiNzc3ZGM1MTQtZDdhNi00MjQ2LWEzMWEtZDI3YmIxNDNjNzgzIiwiaWF0IjoxNzQ3ODE4OTExLCJleHAiOjE3NDg0MjM3MTF9.5VHPUb202AR0U08HYJZPLBo5NVBpKVbILCAR8ntO_vQ;
+Cookie: 
 
 ### Logout
 POST http://localhost:3000/api/auth/logout HTTP/1.1
-Cookie: accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6InVzZXIiLCJ1c2VybmFtZSI6IkFuY0RhbSIsImp0aSI6IjI0ZTVlMjcwLTM4YzItNDRjZC04MzAyLTVlMTYxYTg2MTA1NCIsImlhdCI6MTc0NzgxODkxMSwiZXhwIjoxNzQ3ODE5MzMxfQ.bj6TbJwtPkmvWQ6AvbskCNxO2odgwwqjyZ5jOTF1Nbw;
-
+Cookie: 
