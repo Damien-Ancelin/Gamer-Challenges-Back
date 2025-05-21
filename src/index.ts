@@ -9,6 +9,7 @@ import { configureHelmet } from 'configs/helmet';
 import { configureCors } from 'configs/cors';
 import { errorHandler } from 'middlewares/errorHandler';
 import { notFoundHandler } from 'middlewares/notFoundHandler';
+import { checkRoutesPermission } from 'middlewares/checkRoutesPermission';
 
 const app = express();
 const port = process.env.API_PORT || 3000;
@@ -27,6 +28,9 @@ app.use(express.urlencoded({ extended: true }));
 process.env.NODE_ENV === "production"
   ? app.use(morgan('combined'))
   : app.use(morgan('dev'));
+
+// Security check middleware
+app.use(checkRoutesPermission);
 
 // API Routes
 app.use("/api", apiRouter);

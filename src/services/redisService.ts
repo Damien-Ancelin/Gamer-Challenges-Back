@@ -119,6 +119,11 @@ export const redisService = {
 
       const setResult = await redisClient.set(`blacklist:token:${keyString}`, value, { EX: expirationInSeconds });
 
+      // CleanUp the whitelist
+      await this.deleteAccessWhitelist(keyString);
+      await this.deleteRefreshWhitelist(keyString);
+      
+
       if (setResult === "OK") {
         await this.deleteRefreshWhitelist(keyString);
         await this.deleteAccessWhitelist(keyString);

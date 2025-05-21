@@ -73,8 +73,13 @@ export const authController = {
     authDebug("🧔 authController: api/auth/register");
   },
 
-  async logout(_req: Request, _res: Response){
+  async logout(_req: Request, res: Response){
     authDebug("🧔 authController: api/auth/logout");
+    res.status(200).json({
+      success: true,
+      message: 'ROUTE LOGOUT',
+    });
+    return ;
   },
 
   async refresh(req: Request, res: Response){
@@ -143,7 +148,7 @@ export const authController = {
     if (!isWhitelisted) {
       authDebug("❌ Refresh token is not whitelisted");
       const expirationInSeconds = decodedToken.exp - decodedToken.iat;
-      await redisService.setTokenBlacklist(decodedToken.id.toString(), decodedToken.jti, expirationInSeconds);
+      await redisService.setTokenBlacklist(decodedToken.id, decodedToken.jti, expirationInSeconds);
       res.status(401).json({ success: false, message: "Refresh token non whitelisted" });
       return;
     }
@@ -151,7 +156,8 @@ export const authController = {
     const user = await User.findByPk(decodedToken.id);
     if (!user) {
       authDebug("❌ User not found");
-
+      const expirationInSeconds = decodedToken.exp - decodedToken.iat;
+      await redisService.setTokenBlacklist(decodedToken.id, decodedToken.jti, expirationInSeconds);
       res.status(401).json({ success: false, message: "User not found" });
       return 
     }
