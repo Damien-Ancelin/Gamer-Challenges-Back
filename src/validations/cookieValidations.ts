@@ -5,6 +5,7 @@ export const refreshTokenSchema = Joi.object({
   refreshToken: Joi.string().required(),
 });
 
-export const AccessTokenSchema = Joi.object({
+export const accessTokenSchema = Joi.object({
   accessToken: Joi.string().required(),
+  refreshToken: Joi.string().optional(),
 });

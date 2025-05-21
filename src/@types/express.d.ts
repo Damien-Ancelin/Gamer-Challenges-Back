@@ -11,6 +11,8 @@ declare global {
         id: number;
         role: Role;
         username: string;
+        jti: string;
+        ttlToken: number;
       };
     }
   }

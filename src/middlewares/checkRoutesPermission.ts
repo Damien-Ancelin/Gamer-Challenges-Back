@@ -31,10 +31,6 @@ export async function checkRoutesPermission(
       checkRoutesPermissionDebug("✔ Matching pattern found:", matchingPattern);
       allowedRoles = routesConfig[matchingPattern]?.[method];
     }
-
-    console.log("allowedRoles", allowedRoles);
-    console.log("path", path);
-    console.log("method", path);
   }
 
   if (!allowedRoles || allowedRoles.length === 0) {

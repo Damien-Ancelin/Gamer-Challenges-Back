@@ -113,19 +113,14 @@ export const redisService = {
   },
 
   // * Blacklist Token
-  async setTokenBlacklist(key: number | string, value: string, expirationInSeconds: number) {
+  // Access Token
+  async setAccessTokenBlacklist(key: number | string, value: string, expirationInSeconds: number) {
     try {
       const keyString = this.parseKey(key);
 
-      const setResult = await redisClient.set(`blacklist:token:${keyString}`, value, { EX: expirationInSeconds });
-
-      // CleanUp the whitelist
-      await this.deleteAccessWhitelist(keyString);
-      await this.deleteRefreshWhitelist(keyString);
+      const setResult = await redisClient.set(`blacklist:access:${keyString}`, value, { EX: expirationInSeconds });
       
-
       if (setResult === "OK") {
-        await this.deleteRefreshWhitelist(keyString);
         await this.deleteAccessWhitelist(keyString);
         redisDebug("✔ Access blacklist key set successfully");
         return true; // Key set successfully
@@ -140,11 +135,11 @@ export const redisService = {
     }
   },
 
-  async getTokenBlacklist(key: string | number): Promise<string | null> {
+  async getAccessTokenBlacklist(key: string | number): Promise<string | null> {
     try {
       const keyString = this.parseKey(key);
 
-      const getResult = await redisClient.get(`blacklist:token:${keyString}`);
+      const getResult = await redisClient.get(`blacklist:access:${keyString}`);
       if (getResult === null) {
         redisDebug("✔ Access blacklist key not found");
         return null; // Key not found
@@ -157,20 +152,43 @@ export const redisService = {
     }
   },
 
-  async deleteTokenBlacklist(key: string | number): Promise<number> {
+  // Refresh Token
+  async setRefreshTokenBlacklist(key: number | string, value: string, expirationInSeconds: number) {
     try {
       const keyString = this.parseKey(key);
 
-      const delResult = await redisClient.del(`blacklist:token:${keyString}`);
-      if (delResult === 0) {
-        redisDebug("✔ Access blacklist key not found");
-        return 0; // Key not found
+      const setResult = await redisClient.set(`blacklist:refresh:${keyString}`, value, { EX: expirationInSeconds });
+      
+      if (setResult === "OK") {
+        await this.deleteRefreshWhitelist(keyString);
+        redisDebug("✔ Refresh blacklist key set successfully");
+        return true; // Key set successfully
+
+      } else {
+        redisDebug("❌ Failed to set Refresh blacklist key");
+        return false; // Failed to set key
       }
-      redisDebug("✔ Access blacklist key deleted successfully");
-      return 1; // Key deleted successfully
     } catch (error) {
-      redisDebug("❌ Error deleting access blacklist key:", error);
-      throw new Error("Failed to delete access blacklist key");
+      redisDebug("❌ Error setting Refresh blacklist key:", error);
+      throw new Error("Failed to set Refresh blacklist key");
     }
   },
+
+  async getRefreshTokenBlacklist(key: string | number): Promise<string | null> {
+    try {
+      const keyString = this.parseKey(key);
+
+      const getResult = await redisClient.get(`blacklist:refresh:${keyString}`);
+      if (getResult === null) {
+        redisDebug("✔ Refresh blacklist key not found");
+        return null; // Key not found
+      }
+      redisDebug("✔ Refresh blacklist key retrieved successfully");
+      return getResult;
+    } catch (error) {
+      redisDebug("❌ Error getting Refresh blacklist key:", error);
+      throw new Error("Failed to get Refresh blacklist key");
+    }
+  },
+  
 };

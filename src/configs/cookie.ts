@@ -16,5 +16,5 @@ export const refreshTokenCookieOptions: CookieOptions = {
   secure: isProd,
   sameSite: "strict",
   maxAge: 7 * 24 * 60 * 60 * 1000, // 7 jours
-  path: "/api/auth/refresh-token",
+  path: "/api/auth/",
 };

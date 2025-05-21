@@ -73,13 +73,37 @@ export const authController = {
     authDebug("🧔 authController: api/auth/register");
   },
 
-  async logout(_req: Request, res: Response){
+  async logout(req: Request, res: Response){
     authDebug("🧔 authController: api/auth/logout");
+
+    const refreshToken = req.cookies.refreshToken;
+    if (refreshToken) {
+      const decodedToken = tokenService.verifyRefreshToken(refreshToken);
+      if (decodedToken) {
+        authDebug("✔ Refresh token is valid");
+        const expirationInSeconds = decodedToken.exp - decodedToken.iat;
+        await redisService.setRefreshTokenBlacklist(decodedToken.id, decodedToken.jti, expirationInSeconds);
+      }
+    }
+
+    const user = req.user;
+    if (!user) {
+      authDebug("❌ User not found");
+      res.status(401).json({ success: false, message: "User not found" });
+      return;
+    }
+
+    await redisService.setAccessTokenBlacklist(user.id, user.jti, user.ttlToken);
+    
+    res.clearCookie("accessToken", accessTokenCookieOptions);
+    res.clearCookie("refreshToken", refreshTokenCookieOptions);
+
     res.status(200).json({
       success: true,
-      message: 'ROUTE LOGOUT',
+      message: "Utilisateur déconnecté avec succès",
     });
-    return ;
+
+    return;
   },
 
   async refresh(req: Request, res: Response){
@@ -135,9 +159,9 @@ export const authController = {
       return;
     }
     
-    const isBlacklisted = await redisService.getTokenBlacklist(decodedToken.id);
+    const isBlacklisted = await redisService.getRefreshTokenBlacklist(decodedToken.id);
 
-    if (isBlacklisted) {
+    if (isBlacklisted && isBlacklisted === decodedToken.jti) {
       authDebug("❌ Refresh token is blacklisted");
       res.status(401).json({ success: false, message: "Refresh token blacklisted" });
       return;
@@ -148,7 +172,7 @@ export const authController = {
     if (!isWhitelisted) {
       authDebug("❌ Refresh token is not whitelisted");
       const expirationInSeconds = decodedToken.exp - decodedToken.iat;
-      await redisService.setTokenBlacklist(decodedToken.id, decodedToken.jti, expirationInSeconds);
+      await redisService.setRefreshTokenBlacklist(decodedToken.id, decodedToken.jti, expirationInSeconds);
       res.status(401).json({ success: false, message: "Refresh token non whitelisted" });
       return;
     }
@@ -157,7 +181,7 @@ export const authController = {
     if (!user) {
       authDebug("❌ User not found");
       const expirationInSeconds = decodedToken.exp - decodedToken.iat;
-      await redisService.setTokenBlacklist(decodedToken.id, decodedToken.jti, expirationInSeconds);
+      await redisService.setRefreshTokenBlacklist(decodedToken.id, decodedToken.jti, expirationInSeconds);
       res.status(401).json({ success: false, message: "User not found" });
       return 
     }
