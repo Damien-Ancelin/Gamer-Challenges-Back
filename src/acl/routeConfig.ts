@@ -10,7 +10,7 @@ const routesConfig: RoutesConfig = {
   '/api/auth/login': {
     POST: [],
   },
-  '/api/auth/logout/\\d+': {
+  '/api/auth/logout': {
     POST: [Role.USER, Role.ADMIN],
   },
   '/api/auth/register': {

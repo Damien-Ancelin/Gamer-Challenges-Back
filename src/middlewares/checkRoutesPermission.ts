@@ -19,17 +19,22 @@ export async function checkRoutesPermission(
   const path = req.path;
 
   let allowedRoles = routesConfig[path]?.[method];
-
+  
   if (!allowedRoles) {
     const matchingPattern = Object.keys(routesConfig).find((pattern) => {
-      const regex = new RegExp(`^${pattern.replace(/\\d\+/g, "\\d+")}$`);
+      const regexString = '^' + pattern.replace(/:[^/]+/g, '[^/]+') + '$';
+      const regex = new RegExp(regexString);
       return regex.test(path);
     });
-
+    
     if (matchingPattern) {
       checkRoutesPermissionDebug("✔ Matching pattern found:", matchingPattern);
       allowedRoles = routesConfig[matchingPattern]?.[method];
     }
+
+    console.log("allowedRoles", allowedRoles);
+    console.log("path", path);
+    console.log("method", path);
   }
 
   if (!allowedRoles || allowedRoles.length === 0) {
