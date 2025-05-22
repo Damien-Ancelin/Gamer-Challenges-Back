@@ -26,3 +26,11 @@ export interface RefreshToken {
   iat: number,
   exp: number,
 }
+
+export type CheckUserError =
+{
+  statusCode: number;
+  success: boolean;
+  message?: string;
+  validationErrors?: { errorMessage: string }[]
+}

@@ -7,5 +7,5 @@ import { controllerWrapper } from 'middlewares/controllerWrapper';
 
 authRouter.post('/login', controllerWrapper(authController.login));
 authRouter.post('/register', controllerWrapper(authController.register));
-authRouter.post('/logout', controllerWrapper(authController.logout));
+authRouter.delete('/logout', controllerWrapper(authController.logout));
 authRouter.post('/refresh-token', controllerWrapper(authController.refresh));

@@ -15,7 +15,7 @@ export const authController = {
   async login(req: Request, res: Response){
     authDebug("🧔 authController: api/auth/login");
     const errorMessage = "Couple email/mot de passe incorrect";
-
+    console.log(req.body);
     const { error } = loginSchema.validate(req.body, {
       abortEarly: false,
       stripUnknown: true,
@@ -42,7 +42,7 @@ export const authController = {
 
     if (!user) {
       authDebug("❌ User not found");
-      res.status(401).json({ success: false, message: errorMessage });
+      res.status(400).json({ success: false, message: errorMessage });
       return;
     }
 
@@ -50,7 +50,7 @@ export const authController = {
 
     if (!isPasswordValid) {
       authDebug("❌ Invalid password");
-      res.status(401).json({ success: false, message: errorMessage });
+      res.status(400).json({ success: false, message: errorMessage });
       return;
     }
     
@@ -99,14 +99,14 @@ export const authController = {
     const existingEmail = await User.findOne({ where: { email } });
     if (existingEmail) {
       authDebug("❌ Email already exists");
-      res.status(409).json({ success: false, message: "L'utilisateur existe déjà" });
+      res.status(409).json({ success: false, message: errorMessage });
       return;
     };
 
     const existingUsername = await User.findOne({ where: { username } });
     if (existingUsername) {
       authDebug("❌ Username already exists");
-      res.status(409).json({ success: false, message: "Le nom d'utilisateur existe déjà" });
+      res.status(409).json({ success: false, message: errorMessage });
       return;
     };
 
@@ -152,14 +152,10 @@ export const authController = {
     }
 
     const user = req.user;
-    if (!user) {
-      authDebug("❌ User not found");
-      res.status(401).json({ success: false, message: "User not found" });
-      return;
+    if (user) {
+      await redisService.setAccessTokenBlacklist(user.id, user.jti, user.ttlToken);
     }
 
-    await redisService.setAccessTokenBlacklist(user.id, user.jti, user.ttlToken);
-    
     res.clearCookie("accessToken", accessTokenCookieOptions);
     res.clearCookie("refreshToken", refreshTokenCookieOptions);
 
@@ -175,6 +171,7 @@ export const authController = {
     authDebug("🔄 authController: api/auth/refresh");
     const errorMessage = "Une erreur est survenue";
 
+    // * Joi validation
     const { error } = refreshTokenSchema.validate(req.cookies, {
       abortEarly: false,
       stripUnknown: true,
@@ -187,7 +184,7 @@ export const authController = {
 
       authDebug("Validation error:", validationErrors);
 
-      res.status(401).json({
+      res.status(400).json({
         success: false,
         message: errorMessage,
         validationErrors: validationErrors,
@@ -195,20 +192,21 @@ export const authController = {
       return;
     }
 
+    
+    // * Check if the access token is present in the cookies
     const accessToken = req.cookies.accessToken;
-    const refreshToken = req.cookies.refreshToken;
-
+    
     if(accessToken) {
       const decodedAccessToken = tokenService.verifyAccessToken(accessToken);
       if (decodedAccessToken) {
         authDebug("✔ Access token is still valid");
-        res.status(200).json({
-          success: true,
-          message: "Access token is valid",
-        });
-        return;
+        const expirationInSeconds = decodedAccessToken.exp - decodedAccessToken.iat;
+        await redisService.setAccessTokenBlacklist(decodedAccessToken.id, decodedAccessToken.jti, expirationInSeconds);
       }
     }
+    
+    // * Check if the refresh token is present in the cookies
+    const refreshToken = req.cookies.refreshToken;
 
     if (!refreshToken) {
       authDebug("❌ No refresh token provided");
@@ -216,6 +214,7 @@ export const authController = {
       return;
     }
 
+    // * Check if the refresh token is valid
     const decodedToken = tokenService.verifyRefreshToken(refreshToken);
 
     if (!decodedToken) {
@@ -224,6 +223,7 @@ export const authController = {
       return;
     }
     
+    // * Check if the refresh token is blacklisted
     const isBlacklisted = await redisService.getRefreshTokenBlacklist(decodedToken.id);
 
     if (isBlacklisted && isBlacklisted === decodedToken.jti) {
@@ -232,6 +232,7 @@ export const authController = {
       return;
     }
 
+    // * Check if the refresh token is whitelisted
     const isWhitelisted = await redisService.getRefreshWhitelist(decodedToken.id);
 
     if (!isWhitelisted) {
@@ -242,6 +243,7 @@ export const authController = {
       return;
     }
 
+    // * Check if the user exists
     const user = await User.findByPk(decodedToken.id);
     if (!user) {
       authDebug("❌ User not found");
@@ -251,6 +253,7 @@ export const authController = {
       return 
     }
 
+    // * Create new access token
     const AccessToken = await user.generateAccessToken();
 
     res.cookie("accessToken", AccessToken, accessTokenCookieOptions);
@@ -259,5 +262,5 @@ export const authController = {
       success: true,
       message: "access token régénéré",
     });
-  }
+  },
 };

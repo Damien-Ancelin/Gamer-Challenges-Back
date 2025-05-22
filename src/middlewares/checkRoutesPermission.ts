@@ -4,6 +4,7 @@ import debug from "debug";
 import type { Request, Response, NextFunction } from "express";
 import { Roles as aclRole } from "acl/aclRoles";
 import { checkUser } from "./checkUser";
+import { CheckUserError } from "@types";
 
 const checkRoutesPermissionDebug = debug("app:checkRoutesPermissionDebug");
 
@@ -39,7 +40,7 @@ export async function checkRoutesPermission(
     return;
   }
 
-  const userError = await checkUser(req, res);
+  const userError: CheckUserError | undefined = await checkUser(req, res);
   if (userError?.success === false) {
     res.status(userError.statusCode).json({
       success: false,

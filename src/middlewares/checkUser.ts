@@ -15,6 +15,7 @@ export async function checkUser(req: Request, res: Response) {
     checkUserMwDebug("👮‍♂️ CheckUserMiddleware");
     const errorMessage = "Vous n'êtes pas autorisé à accéder à cette ressource";
 
+    // * Joi validation
     const { error } = accessTokenSchema.validate(req.cookies, {
       abortEarly: false,
       stripUnknown: true,
@@ -28,25 +29,28 @@ export async function checkUser(req: Request, res: Response) {
       checkUserMwDebug("Validation error:", validationErrors);
 
       const userError = {
-        statusCode: 400,
+        statusCode: 401,
         success: false,
-        message: validationErrors,
+        message: errorMessage,
+        validationErrors: validationErrors,
       };
       return userError;
     }
 
+    // * Check if the access token is present in the cookies
     const accessToken = req.cookies.accessToken;
 
     if (!accessToken) {
       checkUserMwDebug("❌ No access token provided");
       const userError = {
-        statusCode: 403,
+        statusCode: 401,
         success: false,
         message: errorMessage,
       };
       return userError;
     }
 
+    // * Check if the access token is valid
     const decodedToken = tokenService.verifyAccessToken(accessToken);
     if (!decodedToken) {
       checkUserMwDebug("❌ Invalid access token");
@@ -58,17 +62,19 @@ export async function checkUser(req: Request, res: Response) {
       return userError;
     }
 
+    // * Check if the access token is blacklisted
     const isBlacklisted = await redisService.getAccessTokenBlacklist(decodedToken.id);
     if (isBlacklisted && isBlacklisted === decodedToken.jti) {
       checkUserMwDebug("❌ Access token is blacklisted");
       const userError = {
-        statusCode: 401,
+        statusCode: 403,
         success: false,
         message: errorMessage,
       };
       return userError;
     }
 
+    // * Check if the access token is whitelisted
     const isWhitelisted = await redisService.getAccessWhitelist(
       decodedToken.id
     );
@@ -77,7 +83,7 @@ export async function checkUser(req: Request, res: Response) {
       (isWhitelisted && isWhitelisted !== decodedToken.jti) ||
       !isWhitelisted
     ) {
-      checkUserMwDebug("❌ Refresh token is not whitelisted");
+      checkUserMwDebug("❌ Access token is not whitelisted");
       const expirationInSeconds = decodedToken.exp - decodedToken.iat;
       await redisService.setAccessTokenBlacklist(
         decodedToken.id,
@@ -85,13 +91,14 @@ export async function checkUser(req: Request, res: Response) {
         expirationInSeconds
       );
       const userError = {
-        statusCode: 401,
+        statusCode: 403,
         success: false,
         message: errorMessage,
       };
       return userError;
     }
 
+    // * Check if the user exists in the database
     const user = await User.findByPk(decodedToken.id);
 
     if (!user) {
@@ -103,13 +110,14 @@ export async function checkUser(req: Request, res: Response) {
         expirationInSeconds
       );
       const userError = {
-        statusCode: 401,
+        statusCode: 403,
         success: false,
         message: errorMessage,
       };
       return userError;
     }
 
+    // * Good at this point, the user is authorized
     const expirationInSeconds = decodedToken.exp - decodedToken.iat;
 
     req.user = {
