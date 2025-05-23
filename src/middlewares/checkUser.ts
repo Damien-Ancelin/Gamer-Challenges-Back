@@ -55,7 +55,7 @@ export async function checkUser(req: Request, res: Response) {
     if (!decodedToken) {
       checkUserMwDebug("❌ Invalid access token");
       const userError = {
-        statusCode: 403,
+        statusCode: 401,
         success: false,
         message: errorMessage,
       };

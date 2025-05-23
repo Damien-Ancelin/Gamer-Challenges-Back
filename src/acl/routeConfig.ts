@@ -19,6 +19,13 @@ const routesConfig: RoutesConfig = {
   '/api/auth/refresh': {
     POST: [],
   },
+  '/api/account/user': {
+    GET: [Role.USER],
+    POST: [Role.USER],
+  },
+  '/api/account/update': {
+    PATCH: [Role.USER],
+  },
   // ................................
 }
 
