@@ -16,9 +16,6 @@ interface ChallengeReviewAttributes {
 export interface ChallengeReviewCreation
   extends Optional<ChallengeReviewAttributes, 'id' | 'createdAt' | 'updatedAt'> {}
 
-export interface ChallengeReviewUpdate
-  extends Optional<ChallengeReviewAttributes, 'id' | 'createdAt' | 'updatedAt'> {}
-
 @Table({
   tableName: "challenge_review",
   modelName: "ChallengeReview",

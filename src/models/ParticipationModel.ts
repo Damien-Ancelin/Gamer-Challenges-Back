@@ -18,9 +18,6 @@ interface ParticipationAttributes {
 export interface ParticipationCreation
   extends Optional<ParticipationAttributes, 'id' | 'createdAt' | 'updatedAt'> {}
 
-export interface ParticipationUpdate 
-  extends Optional<ParticipationAttributes, 'id' | 'createdAt' | 'updatedAt'> {}
-
 @Table({
   tableName: "participation",
   modelName: "Participation",

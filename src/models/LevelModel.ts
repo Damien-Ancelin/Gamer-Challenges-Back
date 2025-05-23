@@ -14,9 +14,6 @@ interface LevelAttributes {
 export interface LevelCreation
   extends Optional<LevelAttributes, 'id' | 'createdAt' | 'updatedAt'> {}
 
-export interface LevelUpdate
-  extends Optional<LevelAttributes, 'id' | 'createdAt' | 'updatedAt'> {}
-
 @Table({
   tableName: "level",
   modelName: "Level",

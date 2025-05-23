@@ -23,9 +23,6 @@ interface GameAttributes {
 export interface GameCreation
   extends Optional<GameAttributes, 'id' | 'createdAt' | 'updatedAt'> {}
 
-export interface GameUpdate
-  extends Optional<GameAttributes, 'id' | 'createdAt' | 'updatedAt'> {}
-
 @Table({
   tableName: "game",
   modelName: "Game",

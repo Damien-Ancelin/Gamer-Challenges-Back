@@ -16,9 +16,6 @@ interface ParticipationReviewAttributes {
 export interface ParticipationReviewCreation
   extends Optional<ParticipationReviewAttributes, 'id' | 'createdAt' | 'updatedAt'> {}
 
-export interface ParticipationReviewUpdate
-  extends Optional<ParticipationReviewAttributes, 'id' | 'createdAt' | 'updatedAt'> {}
-
   @Table({
     tableName: "participation_review",
     modelName: "ParticipationReview",
