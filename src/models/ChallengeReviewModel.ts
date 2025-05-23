@@ -23,12 +23,13 @@ export interface ChallengeReviewUpdate
   tableName: "challenge_review",
   modelName: "ChallengeReview",
   timestamps: true,
-  // indexes: [
-  //   {
-  //     unique: true,
-  //     fields: ['userId', 'challengeId'], // Contrainte unique sur userId et ChallengeId
-  //   },
-  // ],
+  indexes: [
+    {
+      name: 'idx_app_user_challenge',
+      unique: true,
+      fields: ['user_id', 'challenge_id'], // Contrainte unique sur user_id (lié à de app_user en bdd) et challenge_id
+    },
+  ],
 })
 
 export class ChallengeReview extends Model<ChallengeReviewAttributes, ChallengeReviewCreation> implements ChallengeReviewAttributes {

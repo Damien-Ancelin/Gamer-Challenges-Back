@@ -116,7 +116,7 @@ const sequelizeDebug = debug("migration:sequelize");
       password: await argon2.hash("test1234"),
     });
 
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 30; i++) {
       users.push({
         lastname: faker.person.lastName(),
         firstname: faker.person.firstName(),
@@ -282,7 +282,7 @@ const sequelizeDebug = debug("migration:sequelize");
 
     // 9. Create Challenges
     const challenges = [];
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 20; i++) {
       const randomUser = createdUsers[Math.floor(Math.random() * createdUsers.length)];
       const randomCategory = categories[Math.floor(Math.random() * categories.length)];
       const randomLevel = levels[Math.floor(Math.random() * levels.length)];
@@ -304,11 +304,11 @@ const sequelizeDebug = debug("migration:sequelize");
 
     // 10. Create Participations
     const participations = [];
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 20; i++) {
       const randomUser = createdUsers[Math.floor(Math.random() * createdUsers.length)];
       const randomChallenge = createdChallenges[Math.floor(Math.random() * createdChallenges.length)];
       participations.push({
-        videoLink: faker.internet.url(),
+        videoLink: 'https://www.youtube.com/watch?v=0KaX5dVFszk',
         isValidated: Math.random() < 0.5,
         userId: randomUser.id,
         challengeId: randomChallenge.id,
@@ -318,35 +318,69 @@ const sequelizeDebug = debug("migration:sequelize");
     
     // 11. Create Challenge Reviews
     const challengeReviews = [];
-    for (let i = 0; i < 10; i++) {
+
+    // ? create un set pour stocker les paires user-challenge déjà utilisées
+    // https://developer.mozilla.org/fr/docs/Web/JavaScript/Reference/Global_Objects/Set
+    const usedUserChallengePairs = new Set();
+
+    for (let i = 0; i < 20; i++) {
       const randomUser = createdUsers[Math.floor(Math.random() * createdUsers.length)];
       const randomChallenge = createdChallenges[Math.floor(Math.random() * createdChallenges.length)];
+
+      // ? créer une clé unique pour la paire user-challenge
+      const key = `${randomUser.id}-${randomChallenge.id}`;
+
+      // ? vérifier si la paire user-challenge existe déjà
+      if (usedUserChallengePairs.has(key)) {
+        // Cette paire user-challenge existe déjà, on saute ce tour
+        sequelizeDebug(`⛔ Skipping duplicate user-challenge pair: ${key}`);
+        continue;
+      }
+
+      // ? ajouter la paire user-challenge au set
+      usedUserChallengePairs.add(key);
+
       challengeReviews.push({
         content: faker.lorem.paragraph(),
         rating: Math.floor(Math.random() * 5) + 1,
         userId: randomUser.id,
         challengeId: randomChallenge.id,
       });
+
+      // ? vérifier si on a atteint le nombre maximum de paires user-challenge
+      if (usedUserChallengePairs.size >= (createdUsers.length * createdChallenges.length)) break;
     }
     await ChallengeReview.bulkCreate(challengeReviews);
 
     // 12. Create Participation Reviews
     const participationReviews = [];
-    for (let i = 0; i < 10; i++) {
+    const usedUserParticipationPairs = new Set();
+    for (let i = 0; i < 20; i++) {
       const randomUser = createdUsers[Math.floor(Math.random() * createdUsers.length)];
       const randomParticipation = createdParticipations[Math.floor(Math.random() * createdParticipations.length)];
+      const key = `${randomUser.id}-${randomParticipation.id}`;
+
+      if (usedUserParticipationPairs.has(key)) {
+        // Cette paire user-participation existe déjà, on saute ce tour
+        sequelizeDebug(`⛔ Skipping duplicate user-participation pair: ${key}`);
+        continue;
+      }
+      usedUserParticipationPairs.add(key);
+
       participationReviews.push({
         content: faker.lorem.paragraph(),
         rating: Math.floor(Math.random() * 5) + 1,
         userId: randomUser.id,
         participationId: randomParticipation.id,
       });
+
+      if (usedUserParticipationPairs.size >= (createdUsers.length * createdChallenges.length)) break;
     }
     await ParticipationReview.bulkCreate(participationReviews);
 
     sequelizeDebug("✅ Seeding completed successfully.");
   } catch (error) {
-    sequelizeDebug("❌ Error seeding database:", (error as Error).message);
+    sequelizeDebug("❌ Error seeding database:", (error as Error));
   } finally {
     await redisClient.quit();
     await sequelize.close();

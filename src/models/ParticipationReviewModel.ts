@@ -23,12 +23,13 @@ export interface ParticipationReviewUpdate
     tableName: "participation_review",
     modelName: "ParticipationReview",
     timestamps: true,
-    // indexes: [
-    //   {
-    //     unique: true,
-    //     fields: ['userId', 'participationId'], // Contrainte unique sur userId et ParticipationId
-    //   },
-    // ],
+    indexes: [
+      {
+        name: 'idx_app_user_participation',
+        unique: true,
+        fields: ['user_id', 'participation_id'], // Contrainte unique sur user_id (lié à de app_user en bdd) et participation_id
+      },
+    ],
   })
 
 export class ParticipationReview extends Model<ParticipationReviewAttributes, ParticipationReviewCreation> implements ParticipationReviewAttributes {
