@@ -5,6 +5,7 @@ import argon2 from "argon2";
 import { User } from "models/UserModel";
 import { updateUserSchema } from "validations/userValidations";
 import { cloudinaryService } from "services/cloudinaryService";
+import { redisService } from "services/redisService";
 
 const accountDebug = debug("app:accountController");
 
@@ -144,7 +145,69 @@ export const accountController = {
   },
 
   // * Delete user
-  async deleteUser(_req: Request, _res: Response) {
+  async deleteUser(req: Request, res: Response) {
     accountDebug("🧔 accountController: DELETE api/account/update");
+    const errorMessage = "Une erreur est survenue lors de la suppression du compte";
+
+    const userTokenData = req.user;
+
+    if (!userTokenData) {
+      accountDebug("❌ User token data not found");
+      res.status(401).json({
+        success: false,
+        message: "Unauthorized",
+      });
+      return;
+    }
+
+    const user = await User.findByPk(userTokenData.id);
+    if (!user) {
+      accountDebug("❌ User not found");
+      res.status(404).json({
+        success: false,
+        message: errorMessage,
+      });
+      return;
+    }
+
+    await user.destroy();
+
+    const blacklistAcessToken = await redisService.setAccessTokenBlacklist(
+      user.id,
+      userTokenData.jti,
+      userTokenData.ttlToken
+    );
+
+    if (!blacklistAcessToken) {
+      accountDebug("❌ Failed to blacklist access token");
+      res.status(500).json({
+        success: false,
+        message: errorMessage,
+      });
+      return;
+    }
+    accountDebug("✔ Access token blacklisted successfully");
+
+
+    const BlackListRefreshToken = await redisService.setRefreshTokenBlacklist(
+      user.id,
+      userTokenData.jti,
+      userTokenData.ttlToken
+    );
+    if (!BlackListRefreshToken) {
+      accountDebug("❌ Failed to blacklist refresh token");
+      res.status(500).json({
+        success: false,
+        message: errorMessage,
+      });
+      return;
+    }
+    accountDebug("✔ Refresh token blacklisted successfully");
+
+    accountDebug("✔ User deleted successfully");
+    res.status(204).json({
+      success: true,
+      message: "Votre compte a été supprimé avec succès",
+    });
   },
 };

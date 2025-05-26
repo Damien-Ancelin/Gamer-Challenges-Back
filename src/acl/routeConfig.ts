@@ -20,14 +20,14 @@ const routesConfig: RoutesConfig = {
     POST: [],
   },
   '/api/account/user': {
-    GET: [Role.USER],
-    POST: [Role.USER],
+    GET: [Role.USER, Role.ADMIN],
+    POST: [Role.USER, Role.ADMIN],
   },
   '/api/account/update': {
-    PATCH: [Role.USER],
+    PATCH: [Role.USER, Role.ADMIN],
   },
   '/api/account/delete': {
-    DELETE: [Role.USER],
+    DELETE: [Role.USER, Role.ADMIN],
   },
   // ................................
 }
