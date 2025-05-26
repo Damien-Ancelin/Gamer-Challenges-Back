@@ -4,11 +4,11 @@ import argon2 from "argon2";
 
 import { User } from "models/UserModel";
 import { updateUserSchema } from "validations/userValidations";
+import { cloudinaryService } from "services/cloudinaryService";
 
 const accountDebug = debug("app:accountController");
 
 export const accountController = {
-
   // * Get user
   async getUser(req: Request, res: Response) {
     accountDebug("🧔 accountController: GET api/account/user");
@@ -90,8 +90,9 @@ export const accountController = {
       return;
     }
 
-    
-    const avatar = req.file ? `${process.env.API_URL}/uploads/${req.file.filename}` : user.avatar;
+    const avatar = req.file
+      ? await cloudinaryService.uploadAvatar(req.file.path)
+      : user.avatar;
 
     const { lastname, firstname, email, username, password } = req.body;
 

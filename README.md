@@ -41,6 +41,9 @@ Gamer Challenges est une plateforme dédiée aux joueurs souhaitant repousser le
    JWT_REFRESH_SECRET=your_jwt_refresh_token_secret
    JWT_ACCESS_EXPIRATION_TIME=10minutes
    JWT_REFRESH_EXPIRATION_TIME=7days
+   CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
+   CLOUDINARY_API_KEY=your_cloudinary_api_key
+   CLOUDINARY_API_SECRET=your_cloudinary_api_secret
    ```
 
 4. Installez les dépendances :
