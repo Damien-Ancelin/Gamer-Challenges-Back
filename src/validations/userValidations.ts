@@ -3,12 +3,14 @@ import Joi from "joi";
 export const loginSchema = Joi.object({
   email: Joi.string()
     .email()
-    .pattern(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/)
+    .pattern(/^[a-zA0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/)
     .required()
+    .lowercase()
     .messages({
       "string.pattern.base": "L'email doit être une adresse email valide",
       "any.required": "L'email est obligatoire",
       "string.empty": "L'email ne peut pas être vide",
+      "string.lowercase": "L'email ne doit contenir que des minuscule."
     }),
   password: Joi.string().required().messages({
     "any.required": "Le mot de passe est obligatoire",
@@ -29,12 +31,14 @@ export const registerSchema = Joi.object({
   }),
   email: Joi.string()
     .email()
-    .pattern(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/)
+    .pattern(/^[a-zA0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/)
     .required()
+    .lowercase()
     .messages({
       "string.pattern.base": "L'email doit être une adresse email valide",
       "any.required": "L'email est obligatoire",
       "string.empty": "L'email ne peut pas être vide",
+      "string.lowercase": "L'email ne doit contenir que des minuscule."
     }),
   username: Joi.string().min(3).max(30).required().messages({
     "string.min": "Le nom d'utilisateur doit contenir au moins 3 caractères.",
@@ -61,28 +65,30 @@ export const updateUserSchema = Joi.object({
   firstname: Joi.string().optional(),
   email: Joi.string()
     .email()
-    .pattern(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/)
-    .optional()
+    .pattern(/^[a-zA0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/)
+    .required()
+    .lowercase()
     .messages({
       "string.pattern.base": "L'email doit être une adresse email valide",
-      "string.empty": "L'email ne peut pas être vide",
       "any.required": "L'email est obligatoire",
+      "string.empty": "L'email ne peut pas être vide",
+      "string.lowercase": "L'email ne doit contenir que des minuscule."
     }),
   avatar: Joi.string()
-    .pattern(/^(https?:\/\/.*\.(?:png|jpg|jpeg|gif|svg))$/)
+    .pattern(/^(https?:\/\/.*\.(?:png|jpg|webp))$/)
     .optional()
     .messages({
       "string.pattern.base": "L'URL de l'avatar doit être une URL valide."
     }),
   username: Joi.string().alphanum().min(3).max(30).optional(),
   password: Joi.string()
+    .allow("", null)
     .min(8)
     .max(128)
     .pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/)
     .optional()
     .messages({
       "string.pattern.base": "Le mot de passe doit contenir au moins une majuscule, une minuscule, un chiffre et un caractère spécial.",
-      "string.empty": "Le mot de passe ne peut pas être vide.",
       "string.min": "Le mot de passe doit contenir au moins 8 caractères.",
       "string.max": "Le mot de passe ne peut pas dépasser 128 caractères.",
     }),

@@ -1,10 +1,8 @@
 import { Router } from 'express';
-import { testController } from 'controllers/testController';
 import { authRouter } from './api/authRouter';
+import { accountRouter } from './api/accountRouter';
 
 export const apiRouter = Router();
 
-apiRouter.get('/test', testController.getTest);
 apiRouter.use('/auth', authRouter);
-
-
+apiRouter.use('/account', accountRouter);

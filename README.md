@@ -6,7 +6,40 @@ Gamer Challenges est une plateforme dédiée aux joueurs souhaitant repousser le
 
 ## 📦 Package
 
-- ?
+### Dépendances principales :
+
+- 🛡️ **argon2** : Gestion des mots de passe sécurisés.
+- ☁️ **cloudinary** : Gestion des médias dans le cloud.
+- 🍪 **cookie-parser** : Analyse des cookies HTTP.
+- 🌐 **cors** : Gestion des politiques de partage des ressources entre origines.
+- 🐛 **debug** : Outil de débogage.
+- 🌱 **dotenv** : Gestion des variables d'environnement.
+- 🚀 **express** : Framework web rapide et minimaliste.
+- 🛡️ **helmet** : Sécurisation des en-têtes HTTP.
+- ✅ **joi** : Validation des schémas de données.
+- 🔑 **jsonwebtoken** : Gestion des tokens JWT.
+- 📜 **morgan** : Middleware de journalisation HTTP.
+- 📂 **multer** : Gestion des fichiers multipart/form-data.
+- 🐘 **pg** : Client PostgreSQL.
+- 🔄 **redis** : Client Redis.
+- 🪞 **reflect-metadata** : Gestion des métadonnées pour TypeScript.
+- 🗄️ **sequelize** : ORM pour PostgreSQL.
+- 🛠️ **sequelize-typescript** : Extension TypeScript pour Sequelize.
+- 🔑 **uuid** : Génération d'identifiants uniques.
+
+### Dépendances de développement :
+
+- 🎭 **@faker-js/faker** : Génération de données factices pour les tests.
+- 🍪 **@types/cookie-parser** : Types pour `cookie-parser`.
+- 🌐 **@types/cors** : Types pour `cors`.
+- 🐛 **@types/debug** : Types pour `debug`.
+- 🚀 **@types/express** : Types pour `express`.
+- 🔑 **@types/jsonwebtoken** : Types pour `jsonwebtoken`.
+- 📜 **@types/morgan** : Types pour `morgan`.
+- 🐘 **@types/pg** : Types pour `pg`.
+- 🛠️ **typescript** : Langage TypeScript.
+- 🔗 **tsc-alias** : Gestion des alias TypeScript.
+- ⚡ **tsx** : Exécution rapide de fichiers TypeScript.
 
 ## 🚀 Installation
 
@@ -22,7 +55,7 @@ Gamer Challenges est une plateforme dédiée aux joueurs souhaitant repousser le
    cd Gamer-Challenges-Back
    ```
 
-3. Créez et remplissez le fichier .env à partir du fichier ```.env.example``` :
+3. Créez et remplissez le fichier .env à partir du fichier `.env.example` :
 
    ```bash
    NODE_ENV=development
@@ -41,6 +74,9 @@ Gamer Challenges est une plateforme dédiée aux joueurs souhaitant repousser le
    JWT_REFRESH_SECRET=your_jwt_refresh_token_secret
    JWT_ACCESS_EXPIRATION_TIME=10minutes
    JWT_REFRESH_EXPIRATION_TIME=7days
+   CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
+   CLOUDINARY_API_KEY=your_cloudinary_api_key
+   CLOUDINARY_API_SECRET=your_cloudinary_api_secret
    ```
 
 4. Installez les dépendances :
@@ -55,4 +91,21 @@ Gamer Challenges est une plateforme dédiée aux joueurs souhaitant repousser le
    npm run docker:dev:start
    ```
 
-6. Ouvrez votre navigateur et accédez à <http://localhost:3000>.
+6. Synchronisez la base de données :
+
+   - **Option 1** : Créez la base de données
+     ```bash
+     npm run db:create:dev
+     ```
+
+   - **Option 2** : Générez les données de test
+     ```bash
+     npm run db:seeding:dev
+     ```
+
+   - **Option complète** : Réinitialisez la base de données
+     ```bash
+     npm run db:reset:dev
+     ```
+
+7. Ouvrez votre navigateur et accédez à <http://localhost:3000>.

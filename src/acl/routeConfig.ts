@@ -19,6 +19,16 @@ const routesConfig: RoutesConfig = {
   '/api/auth/refresh': {
     POST: [],
   },
+  '/api/account/user': {
+    GET: [Role.USER, Role.ADMIN],
+    POST: [Role.USER, Role.ADMIN],
+  },
+  '/api/account/update': {
+    PATCH: [Role.USER, Role.ADMIN],
+  },
+  '/api/account/delete': {
+    DELETE: [Role.USER, Role.ADMIN],
+  },
   // ................................
 }
 

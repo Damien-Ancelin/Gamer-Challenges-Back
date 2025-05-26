@@ -31,7 +31,9 @@
     "url": "git+https://github.com/Damien-Ancelin/Gamer-Challenges-Back.git"
   },
   "dependencies": {
+    "@types/multer": "^1.4.12",
     "argon2": "^0.43.0",
+    "cloudinary": "^2.6.1",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "debug": "^4.4.1",
@@ -41,6 +43,7 @@
     "joi": "^17.13.3",
     "jsonwebtoken": "^9.0.2",
     "morgan": "^1.10.0",
+    "multer": "^2.0.0",
     "pg": "^8.16.0",
     "redis": "^5.0.1",
     "reflect-metadata": "^0.2.2",
