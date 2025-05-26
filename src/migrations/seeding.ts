@@ -113,7 +113,7 @@ const sequelizeDebug = debug("migration:sequelize");
       firstname: "Dam",
       email: "test@mail.io",
       username: "AncDam",
-      password: await argon2.hash("test1234"),
+      password: await argon2.hash("Test_1234"),
     });
 
     for (let i = 0; i < 30; i++) {

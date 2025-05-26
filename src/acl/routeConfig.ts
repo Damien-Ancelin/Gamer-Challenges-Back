@@ -26,6 +26,9 @@ const routesConfig: RoutesConfig = {
   '/api/account/update': {
     PATCH: [Role.USER],
   },
+  '/api/account/delete': {
+    DELETE: [Role.USER],
+  },
   // ................................
 }
 

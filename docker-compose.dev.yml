@@ -13,6 +13,7 @@ services:
       - DEBUG=app:*,config:*,migration:*, service:*, error:* # Définit la variable d'environnement DEBUG pour activer le débogage
     volumes:
       - .:/usr/src/app # Monte le dossier local ./src dans /usr/src/app du conteneur (synchronisation des fichiers source)
+      - ./src/uploads:/usr/src/app/src/uploads # Monte le dossier local ./src/uploads dans /usr/src/app/src/uploads du conteneur (pour les fichiers uploadés)
     restart: unless-stopped
     # Dépendances du service
     depends_on:

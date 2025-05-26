@@ -69,20 +69,20 @@ export const updateUserSchema = Joi.object({
       "any.required": "L'email est obligatoire",
     }),
   avatar: Joi.string()
-    .pattern(/^(https?:\/\/.*\.(?:png|jpg|jpeg|gif|svg))$/)
+    .pattern(/^(https?:\/\/.*\.(?:png|jpg|webp))$/)
     .optional()
     .messages({
       "string.pattern.base": "L'URL de l'avatar doit être une URL valide."
     }),
   username: Joi.string().alphanum().min(3).max(30).optional(),
   password: Joi.string()
+    .allow("", null)
     .min(8)
     .max(128)
     .pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/)
     .optional()
     .messages({
       "string.pattern.base": "Le mot de passe doit contenir au moins une majuscule, une minuscule, un chiffre et un caractère spécial.",
-      "string.empty": "Le mot de passe ne peut pas être vide.",
       "string.min": "Le mot de passe doit contenir au moins 8 caractères.",
       "string.max": "Le mot de passe ne peut pas dépasser 128 caractères.",
     }),
