@@ -14,7 +14,7 @@ export const configureCors = () => {
     }
     throw new Error("une erreur est survenue");
   }
-
+  
   return cors({
     origin: [FRONTEND_URL, API_URL].filter(Boolean), // Allowed only SPA URL
     methods: ['GET', 'POST', 'PATCH', 'DELETE'], // HTTP Method allowed

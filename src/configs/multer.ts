@@ -4,7 +4,7 @@ import path from "node:path";
 import fs from "node:fs";
 
 const __dirname = path.resolve(); // Assure que __dirname est défini correctement
-const uploadDir = path.join(__dirname, "../uploads");
+const uploadDir = path.join(__dirname, "uploads"); // Chemin vers le dossier de téléchargement
 
 // Crée le dossier s'il n'existe pas
 if (!fs.existsSync(uploadDir)) {
