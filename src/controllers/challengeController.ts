@@ -64,10 +64,7 @@ export const challengeController = {
   },
   async createChallenge(req: Request, res: Response) {
     challengeDebug("🧩 challengeController: POST api/challenges/create");
-    const errorMessage = "Une erreur est survenue";
-
-    console.log("req.body", req.body);
-    console.log("req.file", req.file);
+    const errorMessage = "Une erreur est survenue lors de la création du challenge";
 
     const userTokenData = req.user;
 
