@@ -96,8 +96,12 @@ export const challengeController = {
       },
     });
   },
-  async getChallengeById(_req: Request, _res: Response) {
+  async getChallengeById(_req: Request, res: Response) {
     challengeDebug("🧩 challengeController: GET api/challenges/:id");
+    res.status(501).json({
+      success: false,
+      message: "Cette fonctionnalité n'est pas encore implémentée",
+    });
   },
   async getChallengeReviewById(req: Request, res: Response) {
     challengeDebug("🧩 challengeController: GET api/challenges/:id/ratings");

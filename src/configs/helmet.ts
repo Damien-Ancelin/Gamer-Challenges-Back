@@ -6,6 +6,7 @@ const helmetDebug = debug('config:helmet')
 
 export const configureHelmet = (app: Express) => {
   const FRONTEND_URL = process.env.FRONTEND_URL;
+  const FRONTEND_PREVIEW_URL= process.env.FRONTEND_PREVIEW_URL;
   const API_URL = process.env.API_URL;
 
   if (!FRONTEND_URL || !API_URL) {
@@ -21,7 +22,7 @@ export const configureHelmet = (app: Express) => {
       contentSecurityPolicy: {
         directives: {
           defaultSrc: ["'self'"], // Allow only self for default
-          imgSrc: ["'self'", "data:", String(process.env.FRONTEND_URL)], // Allow images from self and data URIs
+          imgSrc: ["'self'", "data:", String(process.env.FRONTEND_URL), String(FRONTEND_PREVIEW_URL)], // Allow images from self and data URIs
           connectSrc: ["'self'", String(process.env.API_URL)], // Allow connections to self and API URL
           frameSrc: ["'none'"], // Block all frames
           objectSrc: ["'none'"], // Block all objects

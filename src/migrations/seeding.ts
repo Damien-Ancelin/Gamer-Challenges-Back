@@ -289,7 +289,7 @@ const sequelizeDebug = debug("migration:sequelize");
       const randomGame = games[Math.floor(Math.random() * games.length)];
       challenges.push({
         name: randomGame.name + " " + randomCategory.name,
-        challengeImage: faker.image.url(),
+        challengeImage: "https://res.cloudinary.com/dakqktqwy/image/upload/v1748368848/challenges_images/bavvtqxjri7wymv6vuoe.png",
         description: faker.lorem.paragraph(),
         rules: faker.lorem.paragraph(),
         isOpen: Math.random() < 0.5,
