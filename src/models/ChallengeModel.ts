@@ -14,7 +14,7 @@ interface ChallengeAttributes {
   challengeImage?: string | null;
   description: string;
   rules: string;
-  isOpen: boolean;
+  isOpen?: boolean;
   userId: number;
   categoryId: number;
   levelId: number;

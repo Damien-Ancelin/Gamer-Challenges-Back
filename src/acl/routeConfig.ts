@@ -29,6 +29,10 @@ const routesConfig: RoutesConfig = {
   '/api/account/delete': {
     DELETE: [Role.USER, Role.ADMIN],
   },
+  '/api/challenges/create': {
+    GET: [Role.USER, Role.ADMIN],
+    POST: [Role.USER, Role.ADMIN],
+  },
   // ................................
 }
 

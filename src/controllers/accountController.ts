@@ -131,7 +131,14 @@ export const accountController = {
         password: password ? await argon2.hash(password) : user.password,
       },
       {
-        fields: ["lastname", "firstname", "email", "avatar", "username"],
+        fields: [
+          "lastname",
+          "firstname",
+          "email",
+          "avatar",
+          "username",
+          "password",
+        ],
         returning: true,
       }
     );
@@ -147,7 +154,8 @@ export const accountController = {
   // * Delete user
   async deleteUser(req: Request, res: Response) {
     accountDebug("🧔 accountController: DELETE api/account/update");
-    const errorMessage = "Une erreur est survenue lors de la suppression du compte";
+    const errorMessage =
+      "Une erreur est survenue lors de la suppression du compte";
 
     const userTokenData = req.user;
 
@@ -187,7 +195,6 @@ export const accountController = {
       return;
     }
     accountDebug("✔ Access token blacklisted successfully");
-
 
     const BlackListRefreshToken = await redisService.setRefreshTokenBlacklist(
       user.id,
