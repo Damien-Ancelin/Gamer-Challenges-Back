@@ -7,6 +7,7 @@ interface RoutesConfig {
 }
 
 const routesConfig: RoutesConfig = {
+  // ? Authentication routes
   '/api/auth/login': {
     POST: [],
   },
@@ -19,6 +20,8 @@ const routesConfig: RoutesConfig = {
   '/api/auth/refresh': {
     POST: [],
   },
+
+  // ? Account routes
   '/api/account/user': {
     GET: [Role.USER, Role.ADMIN],
     POST: [Role.USER, Role.ADMIN],
@@ -29,9 +32,25 @@ const routesConfig: RoutesConfig = {
   '/api/account/delete': {
     DELETE: [Role.USER, Role.ADMIN],
   },
+
+  // ? Challenge routes
+  '/api/challenges': {
+    GET: [],
+  },
+  '/api/challenges/:id': {
+    GET: [],
+  },
   '/api/challenges/create': {
     GET: [Role.USER, Role.ADMIN],
     POST: [Role.USER, Role.ADMIN],
+  },
+  '/api/challenges/:id/review': {
+    GET: [],
+  },
+
+  // ? Particpation routes
+  '/api/participations/:challenge_id/review': {
+    GET: [],
   },
   // ................................
 }

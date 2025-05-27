@@ -323,7 +323,7 @@ const sequelizeDebug = debug("migration:sequelize");
     // https://developer.mozilla.org/fr/docs/Web/JavaScript/Reference/Global_Objects/Set
     const usedUserChallengePairs = new Set();
 
-    for (let i = 0; i < 20; i++) {
+    for (let i = 0; i < 200; i++) {
       const randomUser = createdUsers[Math.floor(Math.random() * createdUsers.length)];
       const randomChallenge = createdChallenges[Math.floor(Math.random() * createdChallenges.length)];
 
@@ -355,7 +355,7 @@ const sequelizeDebug = debug("migration:sequelize");
     // 12. Create Participation Reviews
     const participationReviews = [];
     const usedUserParticipationPairs = new Set();
-    for (let i = 0; i < 20; i++) {
+    for (let i = 0; i < 200; i++) {
       const randomUser = createdUsers[Math.floor(Math.random() * createdUsers.length)];
       const randomParticipation = createdParticipations[Math.floor(Math.random() * createdParticipations.length)];
       const key = `${randomUser.id}-${randomParticipation.id}`;
