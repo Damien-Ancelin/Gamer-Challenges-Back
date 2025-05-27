@@ -22,24 +22,8 @@ Gamer Challenges est une plateforme dédiée aux joueurs souhaitant repousser le
 - 📂 **multer** : Gestion des fichiers multipart/form-data.
 - 🐘 **pg** : Client PostgreSQL.
 - 🔄 **redis** : Client Redis.
-- 🪞 **reflect-metadata** : Gestion des métadonnées pour TypeScript.
 - 🗄️ **sequelize** : ORM pour PostgreSQL.
-- 🛠️ **sequelize-typescript** : Extension TypeScript pour Sequelize.
 - 🔑 **uuid** : Génération d'identifiants uniques.
-
-### Dépendances de développement :
-
-- 🎭 **@faker-js/faker** : Génération de données factices pour les tests.
-- 🍪 **@types/cookie-parser** : Types pour `cookie-parser`.
-- 🌐 **@types/cors** : Types pour `cors`.
-- 🐛 **@types/debug** : Types pour `debug`.
-- 🚀 **@types/express** : Types pour `express`.
-- 🔑 **@types/jsonwebtoken** : Types pour `jsonwebtoken`.
-- 📜 **@types/morgan** : Types pour `morgan`.
-- 🐘 **@types/pg** : Types pour `pg`.
-- 🛠️ **typescript** : Langage TypeScript.
-- 🔗 **tsc-alias** : Gestion des alias TypeScript.
-- ⚡ **tsx** : Exécution rapide de fichiers TypeScript.
 
 ## 🚀 Installation
 
@@ -66,6 +50,7 @@ Gamer Challenges est une plateforme dédiée aux joueurs souhaitant repousser le
    POSTGRES_HOST=container-postgres
    API_PORT=3000
    FRONTEND_URL=http://url:port
+   FRONTEND_PREVIEW_URL=http://url_vite_preview:port
    API_URL=http://url:port
    REDIS_PORT=6379
    REDIS_HOST=container-redis
