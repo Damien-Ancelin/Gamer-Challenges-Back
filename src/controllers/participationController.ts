@@ -86,6 +86,7 @@ export const participationController = {
       message: "Votre participation au challenge à bien été enregistré",
       challengeId: newParticipation.challengeId,
       isParticipated: true,
+      participation: newParticipation,
     });
   },
   async deleteUserParticipation(req: Request, res: Response) {

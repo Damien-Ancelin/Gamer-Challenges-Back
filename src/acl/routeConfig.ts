@@ -63,6 +63,11 @@ const routesConfig: RoutesConfig = {
   '/api/participations/:challenge_id/review': {
     GET: [],
   },
+
+  // ? Challenge Review routes
+  '/api/challenge-reviews/create': {
+    POST: [Role.USER, Role.ADMIN],
+  },
   // ................................
 }
 
