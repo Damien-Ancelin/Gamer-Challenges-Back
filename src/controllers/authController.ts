@@ -15,7 +15,6 @@ export const authController = {
   async login(req: Request, res: Response){
     authDebug("🧔 authController: api/auth/login");
     const errorMessage = "Couple email/mot de passe incorrect";
-    console.log(req.body);
     const { error } = loginSchema.validate(req.body, {
       abortEarly: false,
       stripUnknown: true,

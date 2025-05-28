@@ -51,7 +51,6 @@ export const challengeController = {
 
     const howManyRows: number = await Challenge.count();
     const totalPages: number = Math.ceil(howManyRows / limit);
-
     const currentPage: number = Math.min(
       totalPages,
       req.query.currentPage ? Number(req.query.currentPage) : 1
