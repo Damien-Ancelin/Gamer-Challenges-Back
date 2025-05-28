@@ -1,12 +1,17 @@
 import type { Request, Response } from "express";
 import debug from "debug";
+
+import { ownerParticipationSchema } from "validations/challengeValidations";
 import { Participation } from "models/ParticipationModel";
+import { User } from "models/UserModel";
 
 const participationDebug = debug("app:participationController");
 
 export const participationController = {
   async getParticipationReviewByChallengeId(req: Request, res: Response) {
-    participationDebug("🧩 participationController: GET api/participations/:challengeId/review");
+    participationDebug(
+      "🧩 participationController: GET api/participations/:challengeId/review"
+    );
 
     const errorMessage =
       "Une erreur est survenue lors de la récupération des participations du challenge";
@@ -42,7 +47,7 @@ export const participationController = {
       success: true,
       participationReview: {
         participationCounts: participations.count,
-      }
+      },
     });
   },
 };

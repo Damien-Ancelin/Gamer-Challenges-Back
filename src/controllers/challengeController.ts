@@ -2,7 +2,10 @@ import type { Request, Response } from "express";
 import debug from "debug";
 
 import { cloudinaryService } from "services/cloudinaryService";
-import { createChallengeSchema } from "validations/challengeValidations";
+import {
+  challengeOwnerSchema,
+  createChallengeSchema,
+} from "validations/challengeValidations";
 
 import { Category } from "models/CategoryModel";
 import { Level } from "models/LevelModel";
@@ -92,62 +95,6 @@ export const challengeController = {
         currentPage: currentPage,
         limit: limit,
         totalPages: totalPages,
-      },
-    });
-  },
-  async getChallengeById(_req: Request, res: Response) {
-    challengeDebug("🧩 challengeController: GET api/challenges/:id");
-    res.status(501).json({
-      success: false,
-      message: "Cette fonctionnalité n'est pas encore implémentée",
-    });
-  },
-  async getChallengeReviewById(req: Request, res: Response) {
-    challengeDebug("🧩 challengeController: GET api/challenges/:id/ratings");
-    const errorMessage =
-      "Une erreur est survenue lors de la récupération des notes du challenge";
-
-    if (!req.params.id) {
-      challengeDebug("❌ id parameter is missing");
-      res.status(400).json({
-        success: false,
-        message: errorMessage,
-      });
-      return;
-    }
-
-    const challengeId = Number(req.params.id);
-
-    if (isNaN(challengeId)) {
-      challengeDebug("❌ Invalid id parameter");
-      res.status(400).json({
-        success: false,
-        message: "Invalid id parameter",
-      });
-      return;
-    }
-
-    const challengeReviews = await ChallengeReview.findAndCountAll({
-      where: { challengeId },
-      attributes: ["rating"],
-    });
-
-    // Calculer le ratio
-    const ratingCounts = challengeReviews.count;
-    const sumRatings = challengeReviews.rows.reduce(
-      (sum, review) => sum + review.rating,
-      0
-    );
-    const averageRating =
-      ratingCounts > 0 ? parseFloat((sumRatings / ratingCounts).toFixed(1)) : 0;
-
-    challengeDebug("✅ Successfully retrieved challenge reviews");
-
-    res.status(200).json({
-      success: true,
-      challengeReview: {
-        ratingCounts,
-        averageRating,
       },
     });
   },
@@ -273,6 +220,177 @@ export const challengeController = {
       success: true,
       message: "le challenge à été créer avec succès",
       challengeId: newChallenge.id,
+    });
+  },
+  async getChallengeOwner(req: Request, res: Response) {
+    challengeDebug("🧩 challengeController: POST api/challenges/owner");
+    const errorMessage =
+      "Une erreur est survenue lors de la récupération du propriétaire du challenge";
+
+    const userTokenData = req.user;
+
+    if (!userTokenData) {
+      challengeDebug("❌ User token data not found");
+      res.status(401).json({
+        success: false,
+        message: "Unauthorized",
+      });
+      return;
+    };
+
+    const { error } = challengeOwnerSchema.validate(req.body, {
+      abortEarly: false,
+      stripUnknown: true,
+    });
+
+    if (error) {
+      const validationErrors = error.details.map((ErrorDetail) => ({
+        errorMessage: ErrorDetail.message,
+      }));
+
+      challengeDebug("Validation error:", validationErrors);
+
+      res.status(400).json({
+        success: false,
+        message: errorMessage,
+        validationErrors: validationErrors,
+      });
+      return;
+    };
+
+    const challengeId = Number(req.body.challenge_id);
+    if (isNaN(challengeId)) {
+      challengeDebug("❌ Invalid challenge ID provided");
+      res.status(400).json({
+        success: false,
+        message: errorMessage,
+      });
+      return;
+    }
+    const challenge = await Challenge.findOne({
+      where: {
+        id: challengeId,
+        userId: userTokenData.id,
+      },
+    });
+    const isOwner = challenge ? true : false;
+
+    res.status(200).json({
+      success: true,
+      isOwner: isOwner,
+    })
+    
+  },
+  async getChallengeReviewById(req: Request, res: Response) {
+    challengeDebug("🧩 challengeController: GET api/challenges/:id/ratings");
+    const errorMessage =
+      "Une erreur est survenue lors de la récupération des notes du challenge";
+
+    if (!req.params.id) {
+      challengeDebug("❌ id parameter is missing");
+      res.status(400).json({
+        success: false,
+        message: errorMessage,
+      });
+      return;
+    }
+
+    const challengeId = Number(req.params.id);
+
+    if (isNaN(challengeId)) {
+      challengeDebug("❌ Invalid id parameter");
+      res.status(400).json({
+        success: false,
+        message: "Invalid id parameter",
+      });
+      return;
+    }
+
+    const challengeReviews = await ChallengeReview.findAndCountAll({
+      where: { challengeId },
+      attributes: ["rating"],
+    });
+
+    // Calculer le ratio
+    const ratingCounts = challengeReviews.count;
+    const sumRatings = challengeReviews.rows.reduce(
+      (sum, review) => sum + review.rating,
+      0
+    );
+    const averageRating =
+      ratingCounts > 0 ? parseFloat((sumRatings / ratingCounts).toFixed(1)) : 0;
+
+    challengeDebug("✅ Successfully retrieved challenge reviews");
+
+    res.status(200).json({
+      success: true,
+      challengeReview: {
+        ratingCounts,
+        averageRating,
+      },
+    });
+  },
+  async getChallengeById(req: Request, res: Response) {
+    challengeDebug("🧩 challengeController: GET api/challenges/:id");
+    const errorMessage =
+      "Une erreur est survenue lors de la récupération du challenge";
+
+    if (!req.params.id) {
+      challengeDebug("❌ id parameter is missing");
+      res.status(400).json({
+        success: false,
+        message: errorMessage,
+      });
+      return;
+    }
+
+    const challengeId = Number(req.params.id);
+
+    if (isNaN(challengeId)) {
+      challengeDebug("❌ Invalid id parameter");
+      res.status(400).json({
+        success: false,
+        message: errorMessage,
+      });
+      return;
+    }
+
+    const challenge = await Challenge.findByPk(challengeId, {
+      include: [
+        {
+          model: Category,
+          attributes: {
+            exclude: ["createdAt", "updatedAt"],
+          },
+        },
+        {
+          model: Level,
+          attributes: {
+            exclude: ["createdAt", "updatedAt"],
+          },
+        },
+        {
+          model: Game,
+          attributes: {
+            exclude: ["createdAt", "updatedAt"],
+          },
+        },
+      ],
+    });
+
+    if (!challenge) {
+      challengeDebug("❌ Challenge not found");
+      res.status(404).json({
+        success: false,
+        message: errorMessage,
+      });
+      return;
+    }
+    challengeDebug("✅ Successfully retrieved challenge by ID");
+    res.status(200).json({
+      success: true,
+      message: "Challenge retrieved successfully",
+      challenge: challenge,
     });
   },
 };

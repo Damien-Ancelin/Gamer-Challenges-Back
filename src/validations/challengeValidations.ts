@@ -32,3 +32,12 @@ export const createChallengeSchema = Joi.object({
     "string.empty": "La difficulté doit être sélectionnée.",
   }),
 })
+
+export const challengeOwnerSchema = Joi.object({
+  challenge_id: Joi.number().required().messages({
+    "any.required": "L'ID du challenge est obligatoire.",
+    "number.base": "L'ID du challenge doit être un nombre.",
+    "number.integer": "L'ID du challenge doit être un entier.",
+    "number.min": "L'ID du challenge doit être supérieur ou égal à 1.",
+  })
+});

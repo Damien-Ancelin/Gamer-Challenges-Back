@@ -9,5 +9,6 @@ export const challengeRouter = Router();
 challengeRouter.get('/', controllerWrapper(challengeController.getChallenges));
 challengeRouter.get('/create', controllerWrapper(challengeController.getCreateChallenge));
 challengeRouter.post('/create', upload.single("challengeImage"), controllerWrapper(challengeController.createChallenge));
+challengeRouter.post('/owner', controllerWrapper(challengeController.getChallengeOwner));
 challengeRouter.get('/:id/review', controllerWrapper(challengeController.getChallengeReviewById));
 challengeRouter.get('/:id', controllerWrapper(challengeController.getChallengeById));
