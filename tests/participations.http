@@ -1,0 +1,14 @@
+### GET Review challenge participation
+GET /api/participations/8/review HTTP/1.1
+Host: localhost:3000
+
+
+### POST Check user participation
+POST /api/participations/check/user HTTP/1.1
+Host: localhost:3000
+Cookie: access_token=your_access_token_here
+Content-Type: application/json
+
+{
+  "challenge_id": 8
+}

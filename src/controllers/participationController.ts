@@ -1,9 +1,8 @@
 import type { Request, Response } from "express";
 import debug from "debug";
 
-import { ownerParticipationSchema } from "validations/challengeValidations";
+import { checkUserParticipationSchema } from "validations/participationValidations";
 import { Participation } from "models/ParticipationModel";
-import { User } from "models/UserModel";
 
 const participationDebug = debug("app:participationController");
 
@@ -48,6 +47,62 @@ export const participationController = {
       participationReview: {
         participationCounts: participations.count,
       },
+    });
+  },
+  async checkUserParticipation(req: Request, res: Response) {
+    participationDebug(
+      "🧩 participationController: POST api/participations/check/user"
+    );
+    const errorMessage =
+      "Une erreur est survenue lors de la vérification de la participation de l'utilisateur";
+
+    const userTokenData = req.user;
+
+    if (!userTokenData) {
+      participationDebug("❌ User token data not found");
+      res.status(401).json({
+        success: false,
+        message: "Unauthorized",
+      });
+      return;
+    }
+
+    const { error } = checkUserParticipationSchema.validate(req.body, {
+      abortEarly: false,
+      stripUnknown: true,
+    });
+
+    if (error) {
+      const validationErrors = error.details.map((ErrorDetail) => ({
+        errorMessage: ErrorDetail.message,
+      }));
+
+      participationDebug("Validation error:", validationErrors);
+
+      res.status(400).json({
+        success: false,
+        message: errorMessage,
+        validationErrors: validationErrors,
+      });
+      return;
+    }
+
+    const challengeId = Number(req.body.challenge_id);
+    const userId = userTokenData.id;
+
+    const participation = await Participation.findOne({
+      where: { userId, challengeId },
+    });
+
+    const isParticipated = participation ? true : false;
+
+    participationDebug(
+      `✅ User participation check completed: ${isParticipated}`
+    );
+
+    res.status(200).json({
+      success: true,
+      isParticipated,
     });
   },
 };
