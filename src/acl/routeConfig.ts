@@ -51,6 +51,9 @@ const routesConfig: RoutesConfig = {
     GET: [],
   },
   // ? Particpation routes
+  '/api/participations/create': {
+    POST: [Role.USER, Role.ADMIN],
+  },
   '/api/participations/check/user': {
     POST: [Role.USER, Role.ADMIN],
   },

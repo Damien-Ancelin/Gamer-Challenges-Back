@@ -8,7 +8,7 @@ import { ParticipationReview } from './ParticipationReviewModel';
 interface ParticipationAttributes {
   id: number;
   videoLink?: string | null;
-  isValidated: boolean;
+  isValidated?: boolean;
   userId: number;
   challengeId: number;
   createdAt: Date;
@@ -22,6 +22,13 @@ export interface ParticipationCreation
   tableName: "participation",
   modelName: "Participation",
   timestamps: true,
+  indexes: [
+    {
+      name: 'idx_participation_user_challenge',
+      unique: true,
+      fields: ['user_id', 'challenge_id'],
+    },
+  ],
 })
 
 export class Participation extends Model<ParticipationAttributes, ParticipationCreation> implements ParticipationAttributes {

@@ -1,53 +1,86 @@
 import type { Request, Response } from "express";
 import debug from "debug";
 
-import { checkUserParticipationSchema } from "validations/participationValidations";
+import { checkUserParticipationSchema, createUserParticipationSchema } from "validations/participationValidations";
 import { Participation } from "models/ParticipationModel";
 
 const participationDebug = debug("app:participationController");
 
 export const participationController = {
-  async getParticipationReviewByChallengeId(req: Request, res: Response) {
+  async createUserParticipation(req: Request, res: Response) {
     participationDebug(
-      "🧩 participationController: GET api/participations/:challengeId/review"
+      "🧩 participationController: POST api/participations/create"
     );
-
     const errorMessage =
-      "Une erreur est survenue lors de la récupération des participations du challenge";
+      "Une erreur est survenue lors de la création de la participation";
 
-    if (!req.params.challenge_id) {
-      participationDebug("❌ challenge_id parameter is missing");
-      res.status(400).json({
-        success: false,
-        message: errorMessage,
+      const userTokenData = req.user;
+
+      if (!userTokenData) {
+        participationDebug("❌ User token data not found");
+        res.status(401).json({
+          success: false,
+          message: "Unauthorized",
+        });
+        return;
+      }
+  
+      const { error } = createUserParticipationSchema.validate(req.body, {
+        abortEarly: false,
+        stripUnknown: true,
       });
-      return;
-    }
+  
+      if (error) {
+        const validationErrors = error.details.map((ErrorDetail) => ({
+          errorMessage: ErrorDetail.message,
+        }));
+  
+        participationDebug("Validation error:", validationErrors);
+  
+        res.status(400).json({
+          success: false,
+          message: errorMessage,
+          validationErrors: validationErrors,
+        });
+        return;
+      }
+  
+      const challengeId = Number(req.body.challenge_id);
+      const userId = userTokenData.id;
 
-    const challengeId = Number(req.params.challenge_id);
-
-    if (isNaN(challengeId)) {
-      participationDebug("❌ Invalid challenge_id parameter");
-      res.status(400).json({
-        success: false,
-        message: errorMessage,
+      const existingParticipation = await Participation.findOne({
+        where: { userId, challengeId },
       });
-      return;
-    }
+      if (existingParticipation) {
+        participationDebug("❌ Participation already exists for this user and challenge");
+        res.status(400).json({
+          success: false,
+          message: "Vous participé déjà à ce challenge",
+        });
+        return;
+      }
 
-    const participations = await Participation.findAndCountAll({
-      where: { challengeId },
-      attributes: ["challengeId"],
-    });
+      const newParticipation = await Participation.create({
+        userId,
+        challengeId,
+      },);
 
-    participationDebug("✅ Successfully retrieved participation reviews");
-
-    res.status(200).json({
-      success: true,
-      participationReview: {
-        participationCounts: participations.count,
-      },
-    });
+      if (!newParticipation) {
+        participationDebug("❌ Failed to create participation");
+        res.status(500).json({
+          success: false,
+          message: errorMessage,
+        });
+        return;
+      }
+      
+      participationDebug("✅ Participation created successfully");
+      res.status(201).json({
+        success: true,
+        message: "la participation au challenge à bien été enregistré",
+        challengeId: newParticipation.challengeId,
+        isParticipated: true,
+      });
   },
   async checkUserParticipation(req: Request, res: Response) {
     participationDebug(
@@ -103,6 +136,48 @@ export const participationController = {
     res.status(200).json({
       success: true,
       isParticipated,
+    });
+  },
+  async getParticipationReviewByChallengeId(req: Request, res: Response) {
+    participationDebug(
+      "🧩 participationController: GET api/participations/:challengeId/review"
+    );
+
+    const errorMessage =
+      "Une erreur est survenue lors de la récupération des participations du challenge";
+
+    if (!req.params.challenge_id) {
+      participationDebug("❌ challenge_id parameter is missing");
+      res.status(400).json({
+        success: false,
+        message: errorMessage,
+      });
+      return;
+    }
+
+    const challengeId = Number(req.params.challenge_id);
+
+    if (isNaN(challengeId)) {
+      participationDebug("❌ Invalid challenge_id parameter");
+      res.status(400).json({
+        success: false,
+        message: errorMessage,
+      });
+      return;
+    }
+
+    const participations = await Participation.findAndCountAll({
+      where: { challengeId },
+      attributes: ["challengeId"],
+    });
+
+    participationDebug("✅ Successfully retrieved participation reviews");
+
+    res.status(200).json({
+      success: true,
+      participationReview: {
+        participationCounts: participations.count,
+      },
     });
   },
 };

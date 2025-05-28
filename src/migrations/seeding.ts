@@ -54,7 +54,7 @@ const sequelizeDebug = debug("migration:sequelize");
       truncate: true,
       restartIdentity: true,
       cascade: true,
-    })
+    });
 
     await Game.destroy({
       truncate: true,
@@ -90,16 +90,16 @@ const sequelizeDebug = debug("migration:sequelize");
       truncate: true,
       restartIdentity: true,
       cascade: true,
-    })
+    });
 
     await ParticipationReview.destroy({
       truncate: true,
       restartIdentity: true,
       cascade: true,
-    })
+    });
 
     sequelizeDebug("✅ All models were dropped successfully.");
-    
+
     // * Init Data
 
     // 1. Create Roles
@@ -131,7 +131,6 @@ const sequelizeDebug = debug("migration:sequelize");
 
     sequelizeDebug("✅ Users created successfully.");
 
-
     // 3. Associate Users with Roles
     const userRoles = createdUsers.map((user) => ({
       userId: user.id,
@@ -154,7 +153,7 @@ const sequelizeDebug = debug("migration:sequelize");
       { name: "Speedrun" },
       { name: "No Hit" },
       { name: "100%" },
-      { name: "Low%"},
+      { name: "Low%" },
       { name: "Pacifist" },
       { name: "Glitchless" },
       { name: "Randomizer" },
@@ -168,87 +167,95 @@ const sequelizeDebug = debug("migration:sequelize");
 
     // 6. Create Games
     const games = await Game.bulkCreate([
-      { 
+      {
         name: "The Legend of Zelda: Ocarina of Time",
         gameImage: faker.image.url(),
         genre: "Action-adventure",
-        description: "An action-adventure game where players control Link, a young hero tasked with stopping the evil king Ganondorf.",
+        description:
+          "An action-adventure game where players control Link, a young hero tasked with stopping the evil king Ganondorf.",
         developer: "Nintendo",
         publisher: "Nintendo",
         pegi: "7",
-        releaseDate: new Date("1998-11-21")
+        releaseDate: new Date("1998-11-21"),
       },
-      { 
+      {
         name: "Super Mario 64",
         gameImage: faker.image.url(),
         genre: "Platformer",
-        description: "A 3D platformer where players control Mario as he navigates through various worlds to rescue Princess Peach.",
+        description:
+          "A 3D platformer where players control Mario as he navigates through various worlds to rescue Princess Peach.",
         developer: "Nintendo",
         publisher: "Nintendo",
         pegi: "3",
-        releaseDate: new Date("1996-06-23")
+        releaseDate: new Date("1996-06-23"),
       },
-      { 
+      {
         name: "Dark Souls",
         gameImage: faker.image.url(),
         genre: "Action RPG",
-        description: "An action RPG known for its challenging gameplay and intricate world design, where players explore the kingdom of Lordran.",
+        description:
+          "An action RPG known for its challenging gameplay and intricate world design, where players explore the kingdom of Lordran.",
         developer: "FromSoftware",
         publisher: "Bandai Namco Entertainment",
         pegi: "16",
-        releaseDate: new Date("2011-09-22")
+        releaseDate: new Date("2011-09-22"),
       },
       {
         name: "The Witcher 3: Wild Hunt",
         gameImage: faker.image.url(),
         genre: "Action RPG",
-        description: "An open-world RPG where players control Geralt of Rivia, a monster hunter searching for his adopted daughter.",
+        description:
+          "An open-world RPG where players control Geralt of Rivia, a monster hunter searching for his adopted daughter.",
         developer: "CD Projekt Red",
         publisher: "CD Projekt",
         pegi: "18",
-        releaseDate: new Date("2015-05-19")
+        releaseDate: new Date("2015-05-19"),
       },
       {
         name: "Minecraft",
         gameImage: faker.image.url(),
         genre: "Sandbox",
-        description: "A sandbox game that allows players to build and explore virtual worlds made up of blocks.",
+        description:
+          "A sandbox game that allows players to build and explore virtual worlds made up of blocks.",
         developer: "Mojang Studios",
         publisher: "Mojang Studios",
         pegi: "7",
-        releaseDate: new Date("2011-11-18")
-      }, 
+        releaseDate: new Date("2011-11-18"),
+      },
       {
         name: "Overwatch",
         gameImage: faker.image.url(),
         genre: "First-person shooter",
-        description: "A team-based multiplayer first-person shooter where players choose from a roster of heroes with unique abilities.",
+        description:
+          "A team-based multiplayer first-person shooter where players choose from a roster of heroes with unique abilities.",
         developer: "Blizzard Entertainment",
         publisher: "Blizzard Entertainment",
         pegi: "12",
-        releaseDate: new Date("2016-05-24")
+        releaseDate: new Date("2016-05-24"),
       },
       {
         name: "The Legend of Zelda: Breath of the Wild",
         gameImage: faker.image.url(),
         genre: "Action-adventure",
-        description: "An open-world action-adventure game where players control Link as he awakens from a long slumber to defeat Calamity Ganon.",
+        description:
+          "An open-world action-adventure game where players control Link as he awakens from a long slumber to defeat Calamity Ganon.",
         developer: "Nintendo",
         publisher: "Nintendo",
         pegi: "12",
-        releaseDate: new Date("2017-03-03")
+        releaseDate: new Date("2017-03-03"),
       },
       {
         name: "Final Fantasy VII Remake",
         gameImage: faker.image.url(),
         genre: "Action RPG",
-        description: "A remake of the classic JRPG that follows Cloud Strife and his allies as they fight against the Shinra Corporation.",
+        description:
+          "A remake of the classic JRPG that follows Cloud Strife and his allies as they fight against the Shinra Corporation.",
         developer: "Square Enix",
         publisher: "Square Enix",
         pegi: "16",
-        releaseDate: new Date("2020-04-10")
+        releaseDate: new Date("2020-04-10"),
       },
-    ])
+    ]);
 
     // 7. Create Platforms
     const platforms = await Platform.bulkCreate([
@@ -269,7 +276,9 @@ const sequelizeDebug = debug("migration:sequelize");
     // 8. Create GamePlatforms
     const gamePlatforms = [];
     for (const game of games) {
-      const randomPlatforms = platforms.sort(() => 0.5 - Math.random()).slice(0, Math.floor(Math.random() * platforms.length));
+      const randomPlatforms = platforms
+        .sort(() => 0.5 - Math.random())
+        .slice(0, Math.floor(Math.random() * platforms.length));
       for (const platform of randomPlatforms) {
         gamePlatforms.push({
           gameId: game.id,
@@ -283,13 +292,16 @@ const sequelizeDebug = debug("migration:sequelize");
     // 9. Create Challenges
     const challenges = [];
     for (let i = 0; i < 20; i++) {
-      const randomUser = createdUsers[Math.floor(Math.random() * createdUsers.length)];
-      const randomCategory = categories[Math.floor(Math.random() * categories.length)];
+      const randomUser =
+        createdUsers[Math.floor(Math.random() * createdUsers.length)];
+      const randomCategory =
+        categories[Math.floor(Math.random() * categories.length)];
       const randomLevel = levels[Math.floor(Math.random() * levels.length)];
       const randomGame = games[Math.floor(Math.random() * games.length)];
       challenges.push({
         name: randomGame.name + " " + randomCategory.name,
-        challengeImage: "https://res.cloudinary.com/dakqktqwy/image/upload/v1748368848/challenges_images/bavvtqxjri7wymv6vuoe.png",
+        challengeImage:
+          "https://res.cloudinary.com/dakqktqwy/image/upload/v1748368848/challenges_images/bavvtqxjri7wymv6vuoe.png",
         description: faker.lorem.paragraph(),
         rules: faker.lorem.paragraph(),
         isOpen: Math.random() < 0.5,
@@ -304,18 +316,41 @@ const sequelizeDebug = debug("migration:sequelize");
 
     // 10. Create Participations
     const participations = [];
-    for (let i = 0; i < 20; i++) {
-      const randomUser = createdUsers[Math.floor(Math.random() * createdUsers.length)];
-      const randomChallenge = createdChallenges[Math.floor(Math.random() * createdChallenges.length)];
+
+    const usedUserChallengeParticipationPairs = new Set();
+
+    for (let i = 0; i < 50; i++) {
+      const randomUser =
+        createdUsers[Math.floor(Math.random() * createdUsers.length)];
+      const randomChallenge =
+        createdChallenges[Math.floor(Math.random() * createdChallenges.length)];
+        
+      const key = `${randomUser.id}-${randomChallenge.id}`;
+      if (usedUserChallengeParticipationPairs.has(key)) {
+        // Cette paire user-challenge existe déjà, on saute ce tour
+        sequelizeDebug(
+          `⛔ Skipping duplicate user-challenge-participation pair: ${key}`
+        );
+        continue;
+      }
+      usedUserChallengeParticipationPairs.add(key);
+
       participations.push({
-        videoLink: 'https://www.youtube.com/watch?v=0KaX5dVFszk',
+        videoLink: "https://www.youtube.com/watch?v=0KaX5dVFszk",
         isValidated: Math.random() < 0.5,
         userId: randomUser.id,
         challengeId: randomChallenge.id,
-     });
+      });
+      if (
+        usedUserChallengeParticipationPairs.size >=
+        createdUsers.length * createdChallenges.length
+      )
+        break;
     }
-    const createdParticipations = await Participation.bulkCreate(participations);
-    
+    const createdParticipations = await Participation.bulkCreate(
+      participations
+    );
+
     // 11. Create Challenge Reviews
     const challengeReviews = [];
 
@@ -324,8 +359,10 @@ const sequelizeDebug = debug("migration:sequelize");
     const usedUserChallengePairs = new Set();
 
     for (let i = 0; i < 200; i++) {
-      const randomUser = createdUsers[Math.floor(Math.random() * createdUsers.length)];
-      const randomChallenge = createdChallenges[Math.floor(Math.random() * createdChallenges.length)];
+      const randomUser =
+        createdUsers[Math.floor(Math.random() * createdUsers.length)];
+      const randomChallenge =
+        createdChallenges[Math.floor(Math.random() * createdChallenges.length)];
 
       // ? créer une clé unique pour la paire user-challenge
       const key = `${randomUser.id}-${randomChallenge.id}`;
@@ -333,7 +370,9 @@ const sequelizeDebug = debug("migration:sequelize");
       // ? vérifier si la paire user-challenge existe déjà
       if (usedUserChallengePairs.has(key)) {
         // Cette paire user-challenge existe déjà, on saute ce tour
-        sequelizeDebug(`⛔ Skipping duplicate user-challenge pair: ${key}`);
+        sequelizeDebug(
+          `⛔ Skipping duplicate user-challenge-review pair: ${key}`
+        );
         continue;
       }
 
@@ -348,7 +387,11 @@ const sequelizeDebug = debug("migration:sequelize");
       });
 
       // ? vérifier si on a atteint le nombre maximum de paires user-challenge
-      if (usedUserChallengePairs.size >= (createdUsers.length * createdChallenges.length)) break;
+      if (
+        usedUserChallengePairs.size >=
+        createdUsers.length * createdChallenges.length
+      )
+        break;
     }
     await ChallengeReview.bulkCreate(challengeReviews);
 
@@ -356,13 +399,19 @@ const sequelizeDebug = debug("migration:sequelize");
     const participationReviews = [];
     const usedUserParticipationPairs = new Set();
     for (let i = 0; i < 200; i++) {
-      const randomUser = createdUsers[Math.floor(Math.random() * createdUsers.length)];
-      const randomParticipation = createdParticipations[Math.floor(Math.random() * createdParticipations.length)];
+      const randomUser =
+        createdUsers[Math.floor(Math.random() * createdUsers.length)];
+      const randomParticipation =
+        createdParticipations[
+          Math.floor(Math.random() * createdParticipations.length)
+        ];
       const key = `${randomUser.id}-${randomParticipation.id}`;
 
       if (usedUserParticipationPairs.has(key)) {
         // Cette paire user-participation existe déjà, on saute ce tour
-        sequelizeDebug(`⛔ Skipping duplicate user-participation pair: ${key}`);
+        sequelizeDebug(
+          `⛔ Skipping duplicate user-participation-review pair: ${key}`
+        );
         continue;
       }
       usedUserParticipationPairs.add(key);
@@ -374,13 +423,17 @@ const sequelizeDebug = debug("migration:sequelize");
         participationId: randomParticipation.id,
       });
 
-      if (usedUserParticipationPairs.size >= (createdUsers.length * createdChallenges.length)) break;
+      if (
+        usedUserParticipationPairs.size >=
+        createdUsers.length * createdChallenges.length
+      )
+        break;
     }
     await ParticipationReview.bulkCreate(participationReviews);
 
     sequelizeDebug("✅ Seeding completed successfully.");
   } catch (error) {
-    sequelizeDebug("❌ Error seeding database:", (error as Error));
+    sequelizeDebug("❌ Error seeding database:", error as Error);
   } finally {
     await redisClient.quit();
     await sequelize.close();
