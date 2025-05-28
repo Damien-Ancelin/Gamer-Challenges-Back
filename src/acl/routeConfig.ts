@@ -68,6 +68,9 @@ const routesConfig: RoutesConfig = {
   '/api/challenge-reviews/create': {
     POST: [Role.USER, Role.ADMIN],
   },
+  '/api/challenge-reviews/check/user': {
+    POST: [Role.USER, Role.ADMIN],
+  },
   // ................................
 }
 

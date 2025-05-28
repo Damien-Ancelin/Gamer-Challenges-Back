@@ -7,7 +7,7 @@ export const createChallengeSchema = Joi.object({
     "any.required": "Le nom du challenge est obligatoire.",
     "string.empty": "Le nom du challenge ne peut pas être vide.",
   }),
-  description: Joi.string().required().min(10).max(500).messages({
+  description: Joi.string().required().min(10).max(1000).messages({
     "string.min": "La description du challenge doit contenir au moins 10 caractères.",
     "string.max": "La description du challenge ne peut pas dépasser 500 caractères.",
     "any.required": "La description du challenge est obligatoire.",

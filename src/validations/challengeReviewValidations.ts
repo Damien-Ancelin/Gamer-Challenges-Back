@@ -12,3 +12,10 @@ export const createChallengeReviewSchema = Joi.object({
     "number.max": "Le champ 'rating' doit être inférieur ou égal à 5.",
   }),
 })
+
+export const checkUserChallengeReviewSchema = Joi.object({
+  challenge_id: Joi.number().required().messages({
+    "any.required": "Le champ 'challenge_id' est requis.",
+    "number.base": "Le champ 'challenge_id' doit être un nombre.",
+  }),
+});

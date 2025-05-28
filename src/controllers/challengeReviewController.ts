@@ -1,6 +1,8 @@
 import type { Request, Response } from "express";
 import debug from "debug";
-import { createChallengeReviewSchema } from "validations/challengeReviewValidations";
+
+import { checkUserChallengeReviewSchema, createChallengeReviewSchema } from "validations/challengeReviewValidations";
+
 import { ChallengeReview } from "models/ChallengeReviewModel";
 
 const challengeReviewDebug = debug("app:challengeReviewController");
@@ -92,6 +94,60 @@ export const challengeReviewController = {
       isVoted: isVoted,
       challengeReview: newChallengeReview,
     });
+  },
+  async checkUserChallengeReview(req: Request, res: Response) {
+    challengeReviewDebug(
+      "🧩 challengeReviewController: POST api/challenge/review/check/user"
+    );
+    const errorMessage =
+      "Une erreur est survenue lors de la vérification de l'avis sur le challenge";
+
+    const userTokenData = req.user;
+
+    if (!userTokenData) {
+      challengeReviewDebug("❌ User token data not found");
+      res.status(401).json({
+        success: false,
+        message: "Unauthorized",
+      });
+      return;
+    }
+
+    const { error } = checkUserChallengeReviewSchema.validate(req.body, {
+      abortEarly: false,
+      stripUnknown: true,
+    });
+
+    if (error) {
+      const validationErrors = error.details.map((ErrorDetail) => ({
+        errorMessage: ErrorDetail.message,
+      }));
+
+      challengeReviewDebug("Validation error:", validationErrors);
+
+      res.status(400).json({
+        success: false,
+        message: errorMessage,
+        validationErrors: validationErrors,
+      });
+      return;
+    }
+
+    const challengeId = Number(req.body.challenge_id);
+    const userId = userTokenData.id;
+
+    const challengeReview = await ChallengeReview.findOne({
+      where: { userId, challengeId },
+    });
+    const isReviewed = challengeReview ? true : false;
+
+    challengeReviewDebug(`✅ User challenge review check completed: ${isReviewed}`);
+
+    res.status(200).json({
+      success: true,
+      isReviewed,
+    });
+
   },
 
 };
