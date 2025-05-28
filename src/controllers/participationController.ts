@@ -1,7 +1,11 @@
 import type { Request, Response } from "express";
 import debug from "debug";
 
-import { checkUserParticipationSchema, createUserParticipationSchema } from "validations/participationValidations";
+import {
+  checkUserParticipationSchema,
+  createUserParticipationSchema,
+  deleteUserParticipationSchema,
+} from "validations/participationValidations";
 import { Participation } from "models/ParticipationModel";
 
 const participationDebug = debug("app:participationController");
@@ -14,73 +18,132 @@ export const participationController = {
     const errorMessage =
       "Une erreur est survenue lors de la création de la participation";
 
-      const userTokenData = req.user;
+    const userTokenData = req.user;
 
-      if (!userTokenData) {
-        participationDebug("❌ User token data not found");
-        res.status(401).json({
-          success: false,
-          message: "Unauthorized",
-        });
-        return;
-      }
-  
-      const { error } = createUserParticipationSchema.validate(req.body, {
-        abortEarly: false,
-        stripUnknown: true,
+    if (!userTokenData) {
+      participationDebug("❌ User token data not found");
+      res.status(401).json({
+        success: false,
+        message: "Unauthorized",
       });
-  
-      if (error) {
-        const validationErrors = error.details.map((ErrorDetail) => ({
-          errorMessage: ErrorDetail.message,
-        }));
-  
-        participationDebug("Validation error:", validationErrors);
-  
-        res.status(400).json({
-          success: false,
-          message: errorMessage,
-          validationErrors: validationErrors,
-        });
-        return;
-      }
-  
-      const challengeId = Number(req.body.challenge_id);
-      const userId = userTokenData.id;
+      return;
+    }
 
-      const existingParticipation = await Participation.findOne({
-        where: { userId, challengeId },
+    const { error } = createUserParticipationSchema.validate(req.body, {
+      abortEarly: false,
+      stripUnknown: true,
+    });
+
+    if (error) {
+      const validationErrors = error.details.map((ErrorDetail) => ({
+        errorMessage: ErrorDetail.message,
+      }));
+
+      participationDebug("Validation error:", validationErrors);
+
+      res.status(400).json({
+        success: false,
+        message: errorMessage,
+        validationErrors: validationErrors,
       });
-      if (existingParticipation) {
-        participationDebug("❌ Participation already exists for this user and challenge");
-        res.status(400).json({
-          success: false,
-          message: "Vous participé déjà à ce challenge",
-        });
-        return;
-      }
+      return;
+    }
 
-      const newParticipation = await Participation.create({
-        userId,
-        challengeId,
-      },);
+    const challengeId = Number(req.body.challenge_id);
+    const userId = userTokenData.id;
 
-      if (!newParticipation) {
-        participationDebug("❌ Failed to create participation");
-        res.status(500).json({
-          success: false,
-          message: errorMessage,
-        });
-        return;
-      }
-      
-      participationDebug("✅ Participation created successfully");
-      res.status(201).json({
-        success: true,
-        message: "la participation au challenge à bien été enregistré",
-        challengeId: newParticipation.challengeId,
-        isParticipated: true,
+    const existingParticipation = await Participation.findOne({
+      where: { userId, challengeId },
+    });
+    if (existingParticipation) {
+      participationDebug(
+        "❌ Participation already exists for this user and challenge"
+      );
+      res.status(400).json({
+        success: false,
+        message: "Vous participé déjà à ce challenge",
       });
+      return;
+    }
+
+    const newParticipation = await Participation.create({
+      userId,
+      challengeId,
+    });
+
+    if (!newParticipation) {
+      participationDebug("❌ Failed to create participation");
+      res.status(500).json({
+        success: false,
+        message: errorMessage,
+      });
+      return;
+    }
+
+    participationDebug("✅ Participation created successfully");
+    res.status(201).json({
+      success: true,
+      message: "Votre participation au challenge à bien été enregistré",
+      challengeId: newParticipation.challengeId,
+      isParticipated: true,
+    });
+  },
+  async deleteUserParticipation(req: Request, res: Response) {
+    participationDebug(
+      "🧩 participationController: DELETE api/participations/delete"
+    );
+    const errorMessage = "Une erreur est survenue lors de la suppression de la participation";
+
+    const userTokenData = req.user;
+
+    if (!userTokenData) {
+      participationDebug("❌ User token data not found");
+      res.status(401).json({
+        success: false,
+        message: "Unauthorized",
+      });
+      return;
+    }
+
+    const { error } = deleteUserParticipationSchema.validate(req.body, {
+      abortEarly: false,
+      stripUnknown: true,
+    });
+
+    if (error) {
+      const validationErrors = error.details.map((ErrorDetail) => ({
+        errorMessage: ErrorDetail.message,
+      }));
+
+      participationDebug("Validation error:", validationErrors);
+
+      res.status(400).json({
+        success: false,
+        message: errorMessage,
+        validationErrors: validationErrors,
+      });
+      return;
+    }
+
+    const challengeId = Number(req.body.challenge_id);
+    const userId = userTokenData.id;
+
+    const participation = await Participation.findOne({
+      where: { userId, challengeId },
+    });
+    if (!participation) {
+      participationDebug("❌ Participation not found for this user and challenge");
+      res.status(404).json({
+        success: false,
+        message: "Vous n'avez aucune participation a supprimer pour ce challenge",
+      });
+      return;
+    }
+    
+    await participation.destroy();
+    participationDebug("✅ Participation deleted successfully");
+
+    res.status(204).json();
   },
   async checkUserParticipation(req: Request, res: Response) {
     participationDebug(
