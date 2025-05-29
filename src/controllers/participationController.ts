@@ -1,17 +1,19 @@
 import type { Request, Response } from "express";
 import debug from "debug";
+import sequelize from "configs/sequelize";
 
 import {
   checkUserParticipationSchema,
   createUserParticipationSchema,
   deleteUserParticipationSchema,
+  getParticipationByIdSchema,
 } from "validations/participationValidations";
+
 import { Participation } from "models/ParticipationModel";
 import { Challenge } from "models/ChallengeModel";
 import { Category } from "models/CategoryModel";
 import { Level } from "models/LevelModel";
 import { Game } from "models/GameModel";
-import sequelize from "configs/sequelize";
 import { User } from "models/UserModel";
 
 const participationDebug = debug("app:participationController");
@@ -110,7 +112,7 @@ export const participationController = {
               "updatedAt",
             ],
           },
-        }
+        },
       ],
     });
 
@@ -426,7 +428,7 @@ export const participationController = {
   },
   async getParticipationReviewByChallengeId(req: Request, res: Response) {
     participationDebug(
-      "🧩 participationController: GET api/participations/:challengeId/review"
+      "🧩 participationController: GET /api/participations/challenge/:challenge_id/count"
     );
 
     const errorMessage =
@@ -464,6 +466,106 @@ export const participationController = {
       participationReview: {
         participationCounts: participations.count,
       },
+    });
+  },
+  async getParticipationById(req: Request, res: Response) {
+    participationDebug(
+      "🧩 participationController: GET api/participations/:id"
+    );
+
+    const errorMessage = "Une erreur est survenue lors de la récupération de la participation";
+
+    const { error } = getParticipationByIdSchema.validate(req.body, {
+      abortEarly: false,
+      stripUnknown: true,
+    });
+
+    if (error) {
+      const validationErrors = error.details.map((ErrorDetail) => ({
+        errorMessage: ErrorDetail.message,
+      }));
+
+      participationDebug("Validation error:", validationErrors);
+
+      res.status(400).json({
+        success: false,
+        message: errorMessage,
+        validationErrors: validationErrors,
+      });
+      return;
+    }
+
+    const participationId = Number(req.params.id);
+
+    if (isNaN(participationId)) {
+      participationDebug("❌ Invalid id parameter");
+      res.status(400).json({
+        success: false,
+        message: errorMessage,
+      });
+      return;
+    }
+
+    const participation = await Participation.findByPk(participationId, {
+      include: [
+        {
+          model: Challenge,
+          attributes: {
+            exclude: ["createdAt", "updatedAt"],
+          },
+          include: [
+            {
+              model: Category,
+              attributes: {
+                exclude: ["createdAt", "updatedAt"],
+              },
+            },
+            {
+              model: Level,
+              attributes: {
+                exclude: ["createdAt", "updatedAt"],
+              },
+            },
+            {
+              model: Game,
+              attributes: {
+                exclude: ["createdAt", "updatedAt"],
+              },
+            },
+          ],
+        },
+        {
+          model: User,
+          attributes: {
+            exclude: [
+              "id",
+              "lastname",
+              "firstname",
+              "email",
+              "avatar",
+              "password",
+              "createdAt",
+              "updatedAt",
+            ],
+          },
+        },
+      ],
+    });
+
+    if (!participation) {
+      participationDebug("❌ Participation not found");
+      res.status(404).json({
+        success: false,
+        message: "Aucune participation trouvée pour l'identifiant fourni",
+      });
+      return;
+    }
+
+    participationDebug("✅ Successfully retrieved participation by ID");
+
+    res.status(200).json({
+      success: true,
+      participation,
     });
   },
 };

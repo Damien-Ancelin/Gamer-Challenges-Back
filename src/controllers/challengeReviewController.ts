@@ -1,7 +1,10 @@
 import type { Request, Response } from "express";
 import debug from "debug";
 
-import { checkUserChallengeReviewSchema, createChallengeReviewSchema } from "validations/challengeReviewValidations";
+import {
+  checkUserChallengeReviewSchema,
+  createChallengeReviewSchema,
+} from "validations/challengeReviewValidations";
 
 import { ChallengeReview } from "models/ChallengeReviewModel";
 
@@ -141,13 +144,64 @@ export const challengeReviewController = {
     });
     const isReviewed = challengeReview ? true : false;
 
-    challengeReviewDebug(`✅ User challenge review check completed: ${isReviewed}`);
+    challengeReviewDebug(
+      `✅ User challenge review check completed: ${isReviewed}`
+    );
 
     res.status(200).json({
       success: true,
       isReviewed,
     });
-
   },
+  async getChallengeReviewById(req: Request, res: Response) {
+    challengeReviewDebug(
+      "🧩 challengeReviewController: GET api/challenge/review/challenge/:challenge_id/review"
+    );
+    const errorMessage =
+      "Une erreur est survenue lors de la récupération des notes du challenge";
 
+    if (!req.params.challenge_id) {
+      challengeReviewDebug("❌ challenge_id parameter is missing");
+      res.status(400).json({
+        success: false,
+        message: errorMessage,
+      });
+      return;
+    }
+
+    const challengeId = Number(req.params.challenge_id);
+
+    if (isNaN(challengeId)) {
+      challengeReviewDebug("❌ Invalid id parameter");
+      res.status(400).json({
+        success: false,
+        message: "Invalid id parameter",
+      });
+      return;
+    }
+
+    const challengeReviews = await ChallengeReview.findAndCountAll({
+      where: { challengeId },
+      attributes: ["rating"],
+    });
+
+    // Calculer le ratio
+    const ratingCounts = challengeReviews.count;
+    const sumRatings = challengeReviews.rows.reduce(
+      (sum, review) => sum + review.rating,
+      0
+    );
+    const averageRating =
+      ratingCounts > 0 ? parseFloat((sumRatings / ratingCounts).toFixed(1)) : 0;
+
+    challengeReviewDebug("✅ Successfully retrieved challenge reviews");
+
+    res.status(200).json({
+      success: true,
+      challengeReview: {
+        ratingCounts,
+        averageRating,
+      },
+    });
+  },
 };

@@ -1,2 +1,3 @@
 ### GET Reviews by challenge ID
-GET http://localhost:3000/api/challenge-reviews/1 HTTP/1.1
+GET /api/challenge-reviews/challenge/8/review HTTP/1.1
+Host: localhost:3000

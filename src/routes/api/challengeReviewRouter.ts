@@ -7,3 +7,4 @@ export const challengeReviewRouter = Router();
 
 challengeReviewRouter.post('/create', controllerWrapper(challengeReviewController.createChallengeReview));
 challengeReviewRouter.post('/check/user', controllerWrapper(challengeReviewController.checkUserChallengeReview));
+challengeReviewRouter.get('/challenge/:challenge_id/review', controllerWrapper(challengeReviewController.getChallengeReviewById));

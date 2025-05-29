@@ -2,8 +2,8 @@
 GET /api/participations?limit=1&currentPage=1&order=updatedAt&direction=desc HTTP/1.1
 Host: localhost:3000
 
-### GET Review challenge participation
-GET /api/participations/8/review HTTP/1.1
+### GET Count how many participations are in a challenge by challenge ID
+GET /api/participations/challenge/8/count HTTP/1.1
 Host: localhost:3000
 
 
@@ -19,4 +19,8 @@ Content-Type: application/json
 
 ### GET popular challenges
 GET /api/participations/popular?limit=5&currentPage=1 HTTP/1.1
+Host: localhost:3000
+
+### GET participation by ID
+GET /api/participations/8 HTTP/1.1
 Host: localhost:3000

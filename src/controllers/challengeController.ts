@@ -11,7 +11,6 @@ import { Category } from "models/CategoryModel";
 import { Level } from "models/LevelModel";
 import { Game } from "models/GameModel";
 import { Challenge } from "models/ChallengeModel";
-import { ChallengeReview } from "models/ChallengeReviewModel";
 
 const challengeDebug = debug("app:challengeController");
 
@@ -280,55 +279,6 @@ export const challengeController = {
       isOwner: isOwner,
     })
     
-  },
-  async getChallengeReviewById(req: Request, res: Response) {
-    challengeDebug("🧩 challengeController: GET api/challenges/:id/ratings");
-    const errorMessage =
-      "Une erreur est survenue lors de la récupération des notes du challenge";
-
-    if (!req.params.id) {
-      challengeDebug("❌ id parameter is missing");
-      res.status(400).json({
-        success: false,
-        message: errorMessage,
-      });
-      return;
-    }
-
-    const challengeId = Number(req.params.id);
-
-    if (isNaN(challengeId)) {
-      challengeDebug("❌ Invalid id parameter");
-      res.status(400).json({
-        success: false,
-        message: "Invalid id parameter",
-      });
-      return;
-    }
-
-    const challengeReviews = await ChallengeReview.findAndCountAll({
-      where: { challengeId },
-      attributes: ["rating"],
-    });
-
-    // Calculer le ratio
-    const ratingCounts = challengeReviews.count;
-    const sumRatings = challengeReviews.rows.reduce(
-      (sum, review) => sum + review.rating,
-      0
-    );
-    const averageRating =
-      ratingCounts > 0 ? parseFloat((sumRatings / ratingCounts).toFixed(1)) : 0;
-
-    challengeDebug("✅ Successfully retrieved challenge reviews");
-
-    res.status(200).json({
-      success: true,
-      challengeReview: {
-        ratingCounts,
-        averageRating,
-      },
-    });
   },
   async getChallengeById(req: Request, res: Response) {
     challengeDebug("🧩 challengeController: GET api/challenges/:id");

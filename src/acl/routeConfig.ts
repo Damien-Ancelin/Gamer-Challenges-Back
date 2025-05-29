@@ -44,9 +44,6 @@ const routesConfig: RoutesConfig = {
   '/api/challenges/owner': {
     POST: [Role.USER, Role.ADMIN],
   },
-  '/api/challenges/:id/review': {
-    GET: [],
-  },
   '/api/challenges/:id': {
     GET: [],
   },
@@ -66,7 +63,10 @@ const routesConfig: RoutesConfig = {
   '/api/participations/check/user': {
     POST: [Role.USER, Role.ADMIN],
   },
-  '/api/participations/:challenge_id/review': {
+  '/api/participations/challenge/:challenge_id/count': {
+    GET: [],
+  },
+  '/api/participations/:id': {
     GET: [],
   },
 
@@ -77,6 +77,14 @@ const routesConfig: RoutesConfig = {
   '/api/challenge-reviews/check/user': {
     POST: [Role.USER, Role.ADMIN],
   },
+  '/api/challenge-reviews/challenge/:challenge_id/review': {
+    GET: [],
+  },
+
+  // ? Participation Review routes
+  'api/participation-reviews/participation/:participation_id/review': {
+    GET: [],
+  }
   // ................................
 }
 

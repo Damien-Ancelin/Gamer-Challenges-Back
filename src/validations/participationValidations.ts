@@ -20,3 +20,10 @@ export const deleteUserParticipationSchema = Joi.object({
     "number.base": "Le champ challenge_id doit être un nombre.",
   }),
 });
+
+export const getParticipationByIdSchema = Joi.object({
+  id: Joi.string().required().messages({
+    "any.required": "Le champ id est requis.",
+    "string.base": "Le champ id doit être une chaîne de caractères.",
+  }),
+});
