@@ -178,10 +178,15 @@ export const participationController = {
     */
 
     const [rows]: any[] = await sequelize.query(
-      `
-      SELECT "participation"."challenge_id", COUNT("participation"."id") AS "participation_count"
+    `
+      SELECT 
+      "participation"."challenge_id", 
+      COUNT("participation"."id") AS "participation_count", 
+      "challenge"."is_open"
       FROM "participation"
-      GROUP BY "participation"."challenge_id"
+      INNER JOIN "challenge" ON "participation"."challenge_id" = "challenge"."id"
+      WHERE "challenge"."is_open" = true
+      GROUP BY "participation"."challenge_id", "challenge"."is_open"
       ORDER BY "participation_count" DESC
       LIMIT :limit
       OFFSET :offset
@@ -472,7 +477,7 @@ export const participationController = {
         message: errorMessage,
       });
       return;
-    };
+    }
 
     const participation = await Participation.findOne({
       where: {
@@ -480,12 +485,10 @@ export const participationController = {
         userId: userTokenData.id,
       },
     });
-    
+
     const isOwner = participation ? true : false;
 
-    participationDebug(
-      `✅ Participation owner check completed: ${isOwner}`
-    );
+    participationDebug(`✅ Participation owner check completed: ${isOwner}`);
 
     res.status(200).json({
       success: true,
