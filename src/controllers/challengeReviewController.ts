@@ -142,11 +142,8 @@ export const challengeReviewController = {
     const challengeReview = await ChallengeReview.findOne({
       where: { userId, challengeId },
     });
-    const isReviewed = challengeReview ? true : false;
 
-    challengeReviewDebug(
-      `✅ User challenge review check completed: ${isReviewed}`
-    );
+    const isReviewed = challengeReview ? true : false;
 
     res.status(200).json({
       success: true,

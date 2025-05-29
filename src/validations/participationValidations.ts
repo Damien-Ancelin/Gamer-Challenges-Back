@@ -27,3 +27,12 @@ export const getParticipationByIdSchema = Joi.object({
     "string.base": "Le champ id doit être une chaîne de caractères.",
   }),
 });
+
+export const participationOwnerSchema = Joi.object({
+  participation_id: Joi.number().required().messages({
+    "any.required": "L'ID de la participation est obligatoire.",
+    "number.base": "L'ID de la participation doit être un nombre.",
+    "number.integer": "L'ID de la participation doit être un entier.",
+    "number.min": "L'ID de la participation doit être supérieur ou égal à 1.",
+  }),
+});

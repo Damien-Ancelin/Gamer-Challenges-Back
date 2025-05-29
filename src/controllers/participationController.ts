@@ -7,6 +7,7 @@ import {
   createUserParticipationSchema,
   deleteUserParticipationSchema,
   getParticipationByIdSchema,
+  participationOwnerSchema,
 } from "validations/participationValidations";
 
 import { Participation } from "models/ParticipationModel";
@@ -426,6 +427,72 @@ export const participationController = {
       isParticipated,
     });
   },
+  async getParticipationOwner(req: Request, res: Response) {
+    participationDebug(
+      "🧩 participationController: POST api/participations/owner"
+    );
+    const errorMessage =
+      "Une erreur est survenue lors de la récupération du propriétaire de la participation";
+
+    const userTokenData = req.user;
+
+    if (!userTokenData) {
+      participationDebug("❌ User token data not found");
+      res.status(401).json({
+        success: false,
+        message: "Unauthorized",
+      });
+      return;
+    }
+
+    const { error } = participationOwnerSchema.validate(req.body, {
+      abortEarly: false,
+      stripUnknown: true,
+    });
+
+    if (error) {
+      const validationErrors = error.details.map((ErrorDetail) => ({
+        errorMessage: ErrorDetail.message,
+      }));
+
+      participationDebug("Validation error:", validationErrors);
+
+      res.status(400).json({
+        success: false,
+        message: errorMessage,
+        validationErrors: validationErrors,
+      });
+      return;
+    }
+
+    const participationId = Number(req.body.participation_id);
+    if (isNaN(participationId)) {
+      participationDebug("❌ Invalid challenge ID provided");
+      res.status(400).json({
+        success: false,
+        message: errorMessage,
+      });
+      return;
+    };
+
+    const participation = await Participation.findOne({
+      where: {
+        id: participationId,
+        userId: userTokenData.id,
+      },
+    });
+    
+    const isOwner = participation ? true : false;
+
+    participationDebug(
+      `✅ Participation owner check completed: ${isOwner}`
+    );
+
+    res.status(200).json({
+      success: true,
+      isOwner: isOwner,
+    });
+  },
   async getParticipationReviewByChallengeId(req: Request, res: Response) {
     participationDebug(
       "🧩 participationController: GET /api/participations/challenge/:challenge_id/count"
@@ -473,7 +540,8 @@ export const participationController = {
       "🧩 participationController: GET api/participations/:id"
     );
 
-    const errorMessage = "Une erreur est survenue lors de la récupération de la participation";
+    const errorMessage =
+      "Une erreur est survenue lors de la récupération de la participation";
 
     const { error } = getParticipationByIdSchema.validate(req.body, {
       abortEarly: false,
