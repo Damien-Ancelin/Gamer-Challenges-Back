@@ -12,17 +12,125 @@ import { Category } from "models/CategoryModel";
 import { Level } from "models/LevelModel";
 import { Game } from "models/GameModel";
 import sequelize from "configs/sequelize";
+import { User } from "models/UserModel";
 
 const participationDebug = debug("app:participationController");
 
 export const participationController = {
-  async getPopularParticipations(req: Request, res: Response) {
+  async getParticipations(req: Request, res: Response) {
+    participationDebug("🧩 participationController: GET api/participations");
+    const errorMessage =
+      "Une erreur est survenue lors de la récupération des participations";
 
+    const limitMax: number = 20;
+
+    if (req.query.limit && isNaN(Number(req.query.limit))) {
+      participationDebug("❌ Invalid limit query parameter");
+      res.status(400).json({
+        success: false,
+        message: errorMessage,
+      });
+      return;
+    }
+
+    const limit: number = Math.min(
+      20,
+      req.query.limit ? Number(req.query.limit) : limitMax
+    );
+
+    if (req.query.currentPage && isNaN(Number(req.query.currentPage))) {
+      participationDebug("❌ Invalid currentPage query parameter");
+      res.status(400).json({
+        success: false,
+        message: errorMessage,
+      });
+      return;
+    }
+
+    const order: string =
+      typeof req.query.order === "string" ? req.query.order : "createdAt";
+
+    const orderDirection: string =
+      typeof req.query.orderDirection === "string"
+        ? req.query.orderDirection
+        : "DESC";
+
+    const howManyRows: number = await Challenge.count();
+    const totalPages: number = Math.ceil(howManyRows / limit);
+    const currentPage: number = Math.min(
+      totalPages,
+      req.query.currentPage ? Number(req.query.currentPage) : 1
+    );
+
+    const offset: number = (currentPage - 1) * limit;
+
+    const participations = await Participation.findAll({
+      limit: limit,
+      offset: offset,
+      order: [[order, orderDirection]],
+      where: { isValidated: true },
+      include: [
+        {
+          model: Challenge,
+          attributes: {
+            exclude: ["createdAt", "updatedAt"],
+          },
+          include: [
+            {
+              model: Category,
+              attributes: {
+                exclude: ["createdAt", "updatedAt"],
+              },
+            },
+            {
+              model: Level,
+              attributes: {
+                exclude: ["createdAt", "updatedAt"],
+              },
+            },
+            {
+              model: Game,
+              attributes: {
+                exclude: ["createdAt", "updatedAt"],
+              },
+            },
+          ],
+        },
+        {
+          model: User,
+          attributes: {
+            exclude: [
+              "id",
+              "lastname",
+              "firstname",
+              "email",
+              "avatar",
+              "password",
+              "createdAt",
+              "updatedAt",
+            ],
+          },
+        }
+      ],
+    });
+
+    res.status(200).json({
+      success: true,
+      participations: participations,
+      pagination: {
+        currentPage: currentPage,
+        limit: limit,
+        totalPages: totalPages,
+      },
+    });
+  },
+  async getPopularParticipations(req: Request, res: Response) {
     participationDebug(
       "🧩 participationController: GET api/participations/popular"
     );
 
-    const errorMessage = "Une erreur est survenue lors de la récupération des participations populaires";
+    const errorMessage =
+      "Une erreur est survenue lors de la récupération des participations populaires";
 
     const limitMax: number = 20;
 
@@ -66,18 +174,23 @@ export const participationController = {
     limit = '5';
     */
 
-    const [rows]: any[] = await sequelize.query(`
+    const [rows]: any[] = await sequelize.query(
+      `
       SELECT "participation"."challenge_id", COUNT("participation"."id") AS "participation_count"
       FROM "participation"
       GROUP BY "participation"."challenge_id"
       ORDER BY "participation_count" DESC
       LIMIT :limit
       OFFSET :offset
-    `, {
-      replacements: { limit, offset },
-    });
+    `,
+      {
+        replacements: { limit, offset },
+      }
+    );
 
-    const popularChallengesId = rows.map((participation: { challenge_id: number }) => participation.challenge_id) as number[];
+    const popularChallengesId = rows.map(
+      (participation: { challenge_id: number }) => participation.challenge_id
+    ) as number[];
 
     const challenges = await Challenge.findAll({
       where: { id: popularChallengesId },

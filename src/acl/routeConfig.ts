@@ -51,6 +51,9 @@ const routesConfig: RoutesConfig = {
     GET: [],
   },
   // ? Particpation routes
+  '/api/participations': {
+    GET: [],
+  },
   '/api/participations/popular': {
     GET: [],
   },
