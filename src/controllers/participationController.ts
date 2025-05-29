@@ -305,7 +305,6 @@ export const participationController = {
     res.status(201).json({
       success: true,
       message: "Votre participation au challenge à bien été enregistré",
-      challengeId: newParticipation.challengeId,
       isParticipated: true,
       participation: newParticipation,
     });
