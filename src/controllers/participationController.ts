@@ -7,10 +7,115 @@ import {
   deleteUserParticipationSchema,
 } from "validations/participationValidations";
 import { Participation } from "models/ParticipationModel";
+import { Challenge } from "models/ChallengeModel";
+import { Category } from "models/CategoryModel";
+import { Level } from "models/LevelModel";
+import { Game } from "models/GameModel";
+import sequelize from "configs/sequelize";
 
 const participationDebug = debug("app:participationController");
 
 export const participationController = {
+  async getPopularParticipations(req: Request, res: Response) {
+
+    participationDebug(
+      "🧩 participationController: GET api/participations/popular"
+    );
+
+    const errorMessage = "Une erreur est survenue lors de la récupération des participations populaires";
+
+    const limitMax: number = 20;
+
+    if (req.query.limit && isNaN(Number(req.query.limit))) {
+      participationDebug("❌ Invalid limit query parameter");
+      res.status(400).json({
+        success: false,
+        message: errorMessage,
+      });
+      return;
+    }
+
+    const limit: number = Math.min(
+      20,
+      req.query.limit ? Number(req.query.limit) : limitMax
+    );
+
+    if (req.query.currentPage && isNaN(Number(req.query.currentPage))) {
+      participationDebug("❌ Invalid currentPage query parameter");
+      res.status(400).json({
+        success: false,
+        message: errorMessage,
+      });
+      return;
+    }
+
+    const howManyRows: number = await Challenge.count();
+    const totalPages: number = Math.ceil(howManyRows / limit);
+    const currentPage: number = Math.min(
+      totalPages,
+      req.query.currentPage ? Number(req.query.currentPage) : 1
+    );
+
+    const offset: number = (currentPage - 1) * limit;
+
+    /* 
+    select "participation"."challenge_id", COUNT("participation"."id") as "participation_count"
+    from "participation"
+    GROUP BY  "participation"."challenge_id"
+    ORDER BY "participation_count" DESC
+    limit = '5';
+    */
+
+    const [rows]: any[] = await sequelize.query(`
+      SELECT "participation"."challenge_id", COUNT("participation"."id") AS "participation_count"
+      FROM "participation"
+      GROUP BY "participation"."challenge_id"
+      ORDER BY "participation_count" DESC
+      LIMIT :limit
+      OFFSET :offset
+    `, {
+      replacements: { limit, offset },
+    });
+
+    const popularChallengesId = rows.map((participation: { challenge_id: number }) => participation.challenge_id) as number[];
+
+    const challenges = await Challenge.findAll({
+      where: { id: popularChallengesId },
+      limit: limit,
+      offset: offset,
+      include: [
+        {
+          model: Category,
+          attributes: {
+            exclude: ["createdAt", "updatedAt"],
+          },
+        },
+        {
+          model: Level,
+          attributes: {
+            exclude: ["createdAt", "updatedAt"],
+          },
+        },
+        {
+          model: Game,
+          attributes: {
+            exclude: ["createdAt", "updatedAt"],
+          },
+        },
+      ],
+    });
+
+    res.status(200).json({
+      success: true,
+      message: "Participations populaires récupérées avec succès",
+      challenges: challenges,
+      pagination: {
+        currentPage: currentPage,
+        limit: limit,
+        totalPages: totalPages,
+      },
+    });
+  },
   async createUserParticipation(req: Request, res: Response) {
     participationDebug(
       "🧩 participationController: POST api/participations/create"
@@ -93,7 +198,8 @@ export const participationController = {
     participationDebug(
       "🧩 participationController: DELETE api/participations/delete"
     );
-    const errorMessage = "Une erreur est survenue lors de la suppression de la participation";
+    const errorMessage =
+      "Une erreur est survenue lors de la suppression de la participation";
 
     const userTokenData = req.user;
 
@@ -133,14 +239,17 @@ export const participationController = {
       where: { userId, challengeId },
     });
     if (!participation) {
-      participationDebug("❌ Participation not found for this user and challenge");
+      participationDebug(
+        "❌ Participation not found for this user and challenge"
+      );
       res.status(404).json({
         success: false,
-        message: "Vous n'avez aucune participation a supprimer pour ce challenge",
+        message:
+          "Vous n'avez aucune participation a supprimer pour ce challenge",
       });
       return;
     }
-    
+
     await participation.destroy();
     participationDebug("✅ Participation deleted successfully");
 

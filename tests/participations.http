@@ -12,3 +12,7 @@ Content-Type: application/json
 {
   "challenge_id": 8
 }
+
+### GET popular challenges
+GET /api/participations/popular?limit=5&currentPage=1 HTTP/1.1
+Host: localhost:3000
