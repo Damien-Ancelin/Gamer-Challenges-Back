@@ -37,6 +37,9 @@ const routesConfig: RoutesConfig = {
   '/api/challenges': {
     GET: [],
   },
+  '/api/challenges/user': {
+    POST: [Role.USER, Role.ADMIN],
+  },
   '/api/challenges/create': {
     GET: [Role.USER, Role.ADMIN],
     POST: [Role.USER, Role.ADMIN],

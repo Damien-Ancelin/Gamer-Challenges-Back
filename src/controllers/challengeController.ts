@@ -97,6 +97,134 @@ export const challengeController = {
       },
     });
   },
+  async getUserChallenges(req: Request, res: Response) {
+    challengeDebug("🧩 challengeController: POST api/challenges/user");
+    const errorMessage =
+      "Une erreur est survenue lors de la récupération des challenges de l'utilisateur";
+
+    const userTokenData = req.user;
+    if (!userTokenData) {
+      challengeDebug("❌ User token data not found");
+      res.status(401).json({
+        success: false,
+        message: "Unauthorized",
+      });
+      return;
+    }
+
+    const limitMax: number = 10;
+
+    if (req.query.limit && isNaN(Number(req.query.limit))) {
+      challengeDebug("❌ Invalid limit query parameter");
+      res.status(400).json({
+        success: false,
+        message: "Invalid limit query parameter",
+      });
+      return;
+    }
+
+    const howManyRows: number = Number(
+      await Challenge.count({
+        where: {
+          userId: userTokenData.id,
+        },
+      })
+    );
+
+    if (howManyRows === 0 || typeof howManyRows !== "number") {
+      challengeDebug("❌ No challenges found for the user");
+      res.status(200).json({
+        success: true,
+        message: "Aucun challenge trouvé pour l'utilisateur",
+        challenges: [],
+        pagination: {
+          currentPage: 1,
+          limit: req.query.limit ? Number(req.query.limit) : limitMax,
+          totalPages: 1,
+        },
+      });
+      return;
+    }
+
+    const limit: number = Math.min(
+      10,
+      req.query.limit ? Number(req.query.limit) : limitMax
+    );
+
+    if (req.query.currentPage && isNaN(Number(req.query.currentPage))) {
+      challengeDebug("❌ Invalid currentPage query parameter");
+      res.status(400).json({
+        success: false,
+        message: "Invalid currentPage query parameter",
+      });
+      return;
+    }
+
+    const order: string =
+      typeof req.query.order === "string" ? req.query.order : "updatedAt";
+
+    const orderDirection: string =
+      typeof req.query.orderDirection === "string"
+        ? req.query.orderDirection
+        : "DESC";
+
+    const totalPages: number = Math.ceil(howManyRows / limit);
+    const currentPage: number = Math.min(
+      totalPages,
+      req.query.currentPage ? Number(req.query.currentPage) : 1
+    );
+
+    const offset: number = (currentPage - 1) * limit;
+
+    const challenges = await Challenge.findAll({
+      where: {
+        userId: userTokenData.id,
+      },
+      order: [[order, orderDirection]],
+      limit: limit,
+      offset: offset,
+      include: [
+        {
+          model: Category,
+          attributes: {
+            exclude: ["createdAt", "updatedAt"],
+          },
+        },
+        {
+          model: Level,
+          attributes: {
+            exclude: ["createdAt", "updatedAt"],
+          },
+        },
+        {
+          model: Game,
+          attributes: {
+            exclude: ["createdAt", "updatedAt"],
+          },
+        },
+      ],
+    });
+
+    if(!challenges || challenges.length === 0) {
+      challengeDebug("❌ No challenges found for the user");
+      res.status(500).json({
+        success: false,
+        message: errorMessage,
+      });
+      return;
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Mes challenges récupérés avec succès",
+      challenges: challenges,
+      pagination: {
+        currentPage: currentPage,
+        limit: limit,
+        totalPages: totalPages,
+      },
+    });
+  },
   async getCreateChallenge(req: Request, res: Response) {
     challengeDebug("🧩 challengeController: GET api/challenges/create");
 
@@ -235,7 +363,7 @@ export const challengeController = {
         message: "Unauthorized",
       });
       return;
-    };
+    }
 
     const { error } = challengeOwnerSchema.validate(req.body, {
       abortEarly: false,
@@ -255,7 +383,7 @@ export const challengeController = {
         validationErrors: validationErrors,
       });
       return;
-    };
+    }
 
     const challengeId = Number(req.body.challenge_id);
     if (isNaN(challengeId)) {
@@ -277,8 +405,7 @@ export const challengeController = {
     res.status(200).json({
       success: true,
       isOwner: isOwner,
-    })
-    
+    });
   },
   async getChallengeById(req: Request, res: Response) {
     challengeDebug("🧩 challengeController: GET api/challenges/:id");

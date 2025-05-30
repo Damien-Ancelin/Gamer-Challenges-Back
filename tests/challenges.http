@@ -5,6 +5,11 @@ Cookie: accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6InV
 ### GET Challenges
 GET http://localhost:3000/api/challenges?limit=10&currentPage=2&order=createdAt&direction=desc HTTP/1.1
 
+### POST challenges user
+POST http://localhost:3000/api/challenges/user HTTP/1.1
+Cookie: accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6InVzZXIiLCJ1c2VybmFtZSI6IkFuY0RhbSIsImp0aSI6IjM2YTFjZGI4LTU5ZjEtNGE5OC05NDViLWRmYjAyOTRhZTAxNiIsImlhdCI6MTc0ODU5ODgyMiwiZXhwIjoxNzQ4NTk5MjQyfQ.ImQfwVgmUiKDL2q5VfnCmfJE5I8loSdU9Ktt_oFoZKo;
+
+
 ### GET Challenge by ID
 GET http://localhost:3000/api/challenges/1 HTTP/1.1
 
