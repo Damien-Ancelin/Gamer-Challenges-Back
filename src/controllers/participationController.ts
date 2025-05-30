@@ -8,6 +8,7 @@ import {
   deleteUserParticipationSchema,
   getParticipationByIdSchema,
   participationOwnerSchema,
+  updateUserParticipationSchema,
 } from "validations/participationValidations";
 
 import { Participation } from "models/ParticipationModel";
@@ -178,7 +179,7 @@ export const participationController = {
     */
 
     const [rows]: any[] = await sequelize.query(
-    `
+      `
       SELECT 
       "participation"."challenge_id", 
       COUNT("participation"."id") AS "participation_count", 
@@ -312,6 +313,100 @@ export const participationController = {
       message: "Votre participation au challenge à bien été enregistré",
       isParticipated: true,
       participation: newParticipation,
+    });
+  },
+  async updateUserParticipation(req: Request, res: Response) {
+    participationDebug(
+      "🧩 participationController: PATCH api/participations/update"
+    );
+    const errorMessage =
+      "Une erreur est survenue lors de la mise à jour de la participation";
+
+    const userTokenData = req.user;
+
+    if (!userTokenData) {
+      participationDebug("❌ User token data not found");
+      res.status(401).json({
+        success: false,
+        message: "Unauthorized",
+      });
+      return;
+    }
+
+    const { error } = updateUserParticipationSchema.validate(req.body, {
+      abortEarly: false,
+      stripUnknown: true,
+    });
+    if (error) {
+      const validationErrors = error.details.map((ErrorDetail) => ({
+        errorMessage: ErrorDetail.message,
+      }));
+
+      participationDebug("Validation error:", validationErrors);
+
+      res.status(400).json({
+        success: false,
+        message: errorMessage,
+        validationErrors: validationErrors,
+      });
+      return;
+    };
+
+    const participationId = Number(req.body.id);
+    if (isNaN(participationId)) {
+      participationDebug("❌ Invalid participation_id provided");
+      res.status(400).json({
+        success: false,
+        message: errorMessage,
+      });
+      return;
+    }
+
+    const videoUrl: string | null = req.body.videoLink || null;
+    const isValidated: boolean = videoUrl ? true : false;
+
+    const participation = await Participation.findOne({
+      where: {
+        id: participationId,
+        userId: userTokenData.id,
+      },
+    });
+
+    if (!participation) {
+      participationDebug("❌ Participation not found for this user");
+      res.status(404).json({
+        success: false,
+        message: "Aucune participation trouvée pour l'identifiant fourni",
+      });
+      return;
+    }
+    
+    const updatedParticipation = await participation.update(
+      {
+        videoLink: videoUrl || null,
+        isValidated: isValidated || false,
+      },
+      {
+        fields: [
+          "videoLink",
+          "isValidated",
+        ],
+        returning: true,
+      }
+    );
+    if (!updatedParticipation) {
+      participationDebug("❌ Failed to update participation");
+      res.status(500).json({
+        success: false,
+        message: errorMessage,
+      });
+      return;
+    }
+    participationDebug("✅ Participation updated successfully");
+    res.status(200).json({
+      success: true,
+      message: "Votre participation au challenge a bien été mise à jour",
+      participation: updatedParticipation,
     });
   },
   async deleteUserParticipation(req: Request, res: Response) {

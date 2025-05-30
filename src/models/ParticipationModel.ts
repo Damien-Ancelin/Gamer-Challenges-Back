@@ -8,7 +8,7 @@ import { ParticipationReview } from './ParticipationReviewModel';
 interface ParticipationAttributes {
   id: number;
   videoLink?: string | null;
-  isValidated?: boolean;
+  isValidated: boolean;
   userId: number;
   challengeId: number;
   createdAt: Date;
@@ -16,7 +16,7 @@ interface ParticipationAttributes {
 }
 
 export interface ParticipationCreation
-  extends Optional<ParticipationAttributes, 'id' | 'createdAt' | 'updatedAt'> {}
+  extends Optional<ParticipationAttributes, 'id' | 'createdAt' | 'updatedAt' | 'isValidated'> {}
 
 @Table({
   tableName: "participation",

@@ -57,6 +57,9 @@ const routesConfig: RoutesConfig = {
   '/api/participations/create': {
     POST: [Role.USER, Role.ADMIN],
   },
+  '/api/participations/update': {
+    PATCH: [Role.USER, Role.ADMIN],
+  },
   '/api/participations/delete': {
     DELETE: [Role.USER, Role.ADMIN],
   },
