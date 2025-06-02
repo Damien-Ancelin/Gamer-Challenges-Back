@@ -24,3 +24,7 @@ Host: localhost:3000
 ### GET participation by ID
 GET /api/participations/8 HTTP/1.1
 Host: localhost:3000
+
+### GET participation by challenge ID
+GET /api/participations/challenge/4?limit=10&currentPage=1&order=updatedAt&direction=desc HTTP/1.1
+Host: localhost:3000

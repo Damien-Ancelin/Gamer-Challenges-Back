@@ -78,6 +78,9 @@ const routesConfig: RoutesConfig = {
   '/api/participations/challenge/:challenge_id/count': {
     GET: [],
   },
+  '/api/participations/challenge/:challenge_id': {
+    GET: [],
+  },
   '/api/participations/:id': {
     GET: [],
   },

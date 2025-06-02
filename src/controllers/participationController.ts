@@ -761,6 +761,168 @@ export const participationController = {
       },
     });
   },
+  async getParticipationsByChallengeId(req: Request, res: Response) {
+    participationDebug(
+      "🧩 participationController: GET /api/participations/challenge/:challenge_id"
+    );
+
+    const errorMessage =
+      "Une erreur est survenue lors de la récupération des participations du challenge";
+
+    if (!req.params.challenge_id) {
+      participationDebug("❌ challenge_id parameter is missing");
+      res.status(400).json({
+        success: false,
+        message: errorMessage,
+      });
+      return;
+    }
+
+    const challengeId = Number(req.params.challenge_id);
+
+    if (isNaN(challengeId)) {
+      participationDebug("❌ Invalid challenge_id parameter");
+      res.status(400).json({
+        success: false,
+        message: errorMessage,
+      });
+      return;
+    }
+
+    const limitMax: number = 10;
+
+    if (req.query.limit && isNaN(Number(req.query.limit))) {
+      participationDebug("❌ Invalid limit query parameter");
+      res.status(400).json({
+        success: false,
+        message: "Invalid limit query parameter",
+      });
+      return;
+    }
+
+    const limit: number = Math.min(
+      10,
+      req.query.limit ? Number(req.query.limit) : limitMax
+    );
+
+    const howManyRows: number = await Participation.count({
+      where: { challengeId },
+    });
+
+    if( howManyRows === 0 || typeof howManyRows !== "number") {
+      participationDebug("❌ No participations found for the challenge");
+      res.status(200).json({
+        success: true,
+        message: "Aucune participation trouvée pour ce challenge",
+        participations: [],
+        pagination: {
+          currentPage: 1,
+          limit: limit,
+          totalPages: 1,
+        },
+      });
+      return;
+    }
+
+    if (req.query.currentPage && isNaN(Number(req.query.currentPage))) {
+      participationDebug("❌ Invalid currentPage query parameter");
+      res.status(400).json({
+        success: false,
+        message: "Invalid currentPage query parameter",
+      });
+      return;
+    }
+
+    const order: string =
+      typeof req.query.order === "string" ? req.query.order : "updatedAt";
+
+    const orderDirection: string =
+      typeof req.query.orderDirection === "string"
+        ? req.query.orderDirection
+        : "DESC";
+
+    const totalPages: number = Math.ceil(howManyRows / limit);
+    const currentPage: number = Math.min(
+      totalPages,
+      req.query.currentPage ? Number(req.query.currentPage) : 1
+    );
+
+    const offset: number = (currentPage - 1) * limit;
+    
+
+    const participations = await Participation.findAll({
+      where: { challengeId },
+      order: [[order, orderDirection]],
+      limit: limit,
+      offset: offset,
+      include: [
+        {
+          model: Challenge,
+          attributes: {
+            exclude: ["createdAt", "updatedAt"],
+          },
+          include: [
+            {
+              model: Category,
+              attributes: {
+                exclude: ["createdAt", "updatedAt"],
+              },
+            },
+            {
+              model: Level,
+              attributes: {
+                exclude: ["createdAt", "updatedAt"],
+              },
+            },
+            {
+              model: Game,
+              attributes: {
+                exclude: ["createdAt", "updatedAt"],
+              },
+            },
+          ],
+        },
+        {
+          model: User,
+          attributes: {
+            exclude: [
+              "id",
+              "lastname",
+              "firstname",
+              "email",
+              "avatar",
+              "password",
+              "createdAt",
+              "updatedAt",
+            ],
+          },
+        },
+      ],
+    });
+
+    if (!participations || participations.length === 0) {
+      participationDebug("❌ No participations found for the challenge");
+      res.status(404).json({
+        success: false,
+        message:
+          "Aucune participation trouvée pour l'identifiant du challenge fourni",
+      });
+      return;
+    }
+
+    participationDebug("✅ Successfully retrieved participations by challenge ID");
+
+    res.status(200).json({
+      success: true,
+      participations,
+      pagination: {
+        currentPage: currentPage,
+        limit: limit,
+        totalPages: totalPages,
+      },
+    });
+
+  },
   async getParticipationById(req: Request, res: Response) {
     participationDebug(
       "🧩 participationController: GET api/participations/:id"

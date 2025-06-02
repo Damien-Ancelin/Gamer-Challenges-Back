@@ -14,5 +14,6 @@ participationRouter.delete('/delete', controllerWrapper(participationController.
 participationRouter.post('/check/user', controllerWrapper(participationController.checkUserParticipation));
 participationRouter.post('/owner', controllerWrapper(participationController.getParticipationOwner));
 participationRouter.get('/challenge/:challenge_id/count', controllerWrapper(participationController.getParticipationReviewByChallengeId));
+participationRouter.get('/challenge/:challenge_id', controllerWrapper(participationController.getParticipationsByChallengeId));
 participationRouter.get('/:id', controllerWrapper(participationController.getParticipationById));
 

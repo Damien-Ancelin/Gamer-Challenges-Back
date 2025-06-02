@@ -123,6 +123,11 @@ export const challengeController = {
       return;
     }
 
+    const limit: number = Math.min(
+      10,
+      req.query.limit ? Number(req.query.limit) : limitMax
+    );
+
     const howManyRows: number = Number(
       await Challenge.count({
         where: {
@@ -139,17 +144,12 @@ export const challengeController = {
         challenges: [],
         pagination: {
           currentPage: 1,
-          limit: req.query.limit ? Number(req.query.limit) : limitMax,
+          limit: limit,
           totalPages: 1,
         },
       });
       return;
     }
-
-    const limit: number = Math.min(
-      10,
-      req.query.limit ? Number(req.query.limit) : limitMax
-    );
 
     if (req.query.currentPage && isNaN(Number(req.query.currentPage))) {
       challengeDebug("❌ Invalid currentPage query parameter");
