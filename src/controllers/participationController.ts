@@ -128,6 +128,41 @@ export const participationController = {
       },
     });
   },
+  async getParticipationsLeaderboard(_req: Request, res: Response) {
+    participationDebug(
+      "🧩 participationController: GET api/participations/leaderboard"
+    );
+    const errorMessage = "Aucune participation trouvée pour le leaderboard";
+
+    const [rows]: any[] = await sequelize.query(
+      `
+        SELECT  
+          "app_user"."username",
+          COUNT("participation"."id") AS "participation_count"
+        FROM "participation"
+        INNER JOIN "app_user" ON "participation"."user_id" = "app_user"."id"
+        WHERE "participation"."is_validated" = true
+        GROUP BY "app_user"."username"
+        ORDER BY "participation_count" DESC
+        LIMIT 10
+      `,
+    );
+
+    if (!rows || rows.length === 0) {
+      participationDebug("❌ No participations found for the leaderboard");
+      res.status(404).json({
+        success: false,
+        message: errorMessage,
+      });
+      return;
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Leaderboard des participations récupéré avec succès",
+      leaderboard: rows,
+    });
+  },
   async getUserParticipations(req: Request, res: Response) {
     participationDebug(
       "🧩 participationController: GET api/participations/user"
@@ -809,7 +844,7 @@ export const participationController = {
       where: { challengeId },
     });
 
-    if( howManyRows === 0 || typeof howManyRows !== "number") {
+    if (howManyRows === 0 || typeof howManyRows !== "number") {
       participationDebug("❌ No participations found for the challenge");
       res.status(200).json({
         success: true,
@@ -848,7 +883,6 @@ export const participationController = {
     );
 
     const offset: number = (currentPage - 1) * limit;
-    
 
     const participations = await Participation.findAll({
       where: { challengeId },
@@ -910,7 +944,9 @@ export const participationController = {
       return;
     }
 
-    participationDebug("✅ Successfully retrieved participations by challenge ID");
+    participationDebug(
+      "✅ Successfully retrieved participations by challenge ID"
+    );
 
     res.status(200).json({
       success: true,
@@ -921,7 +957,6 @@ export const participationController = {
         totalPages: totalPages,
       },
     });
-
   },
   async getParticipationById(req: Request, res: Response) {
     participationDebug(
