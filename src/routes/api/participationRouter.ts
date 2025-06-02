@@ -6,6 +6,7 @@ import { participationController } from 'controllers/participationController';
 export const participationRouter = Router();
 
 participationRouter.get('/', controllerWrapper(participationController.getParticipations));
+participationRouter.post('/user', controllerWrapper(participationController.getUserParticipations));
 participationRouter.get('/popular', controllerWrapper(participationController.getPopularParticipations));
 participationRouter.post('/create', controllerWrapper(participationController.createUserParticipation));
 participationRouter.patch('/update', controllerWrapper(participationController.updateUserParticipation));

@@ -128,6 +128,138 @@ export const participationController = {
       },
     });
   },
+  async getUserParticipations(req: Request, res: Response) {
+    participationDebug(
+      "🧩 participationController: GET api/participations/user"
+    );
+    const errorMessage =
+      "Une erreur est survenue lors de la récupération des participations de l'utilisateur";
+
+    const userTokenData = req.user;
+    if (!userTokenData) {
+      participationDebug("❌ User token data not found");
+      res.status(401).json({
+        success: false,
+        message: "Unauthorized",
+      });
+      return;
+    }
+
+    const limitMax: number = 10;
+
+    if (req.query.limit && isNaN(Number(req.query.limit))) {
+      participationDebug("❌ Invalid limit query parameter");
+      res.status(400).json({
+        success: false,
+        message: "Invalid limit query parameter",
+      });
+      return;
+    }
+
+    const howManyRows: number = await Participation.count({
+      where: { userId: userTokenData.id },
+    });
+
+    if (howManyRows === 0 || typeof howManyRows !== "number") {
+      participationDebug("❌ No challenges found for the user");
+      res.status(200).json({
+        success: true,
+        message: "Aucunes participation trouvé pour l'utilisateur",
+        participations: [],
+        pagination: {
+          currentPage: 1,
+          limit: req.query.limit ? Number(req.query.limit) : limitMax,
+          totalPages: 1,
+        },
+      });
+      return;
+    }
+
+    const limit: number = Math.min(
+      10,
+      req.query.limit ? Number(req.query.limit) : limitMax
+    );
+
+    if (req.query.currentPage && isNaN(Number(req.query.currentPage))) {
+      participationDebug("❌ Invalid currentPage query parameter");
+      res.status(400).json({
+        success: false,
+        message: "Invalid currentPage query parameter",
+      });
+      return;
+    }
+
+    const order: string =
+      typeof req.query.order === "string" ? req.query.order : "updatedAt";
+
+    const orderDirection: string =
+      typeof req.query.orderDirection === "string"
+        ? req.query.orderDirection
+        : "DESC";
+
+    const totalPages: number = Math.ceil(howManyRows / limit);
+    const currentPage: number = Math.min(
+      totalPages,
+      req.query.currentPage ? Number(req.query.currentPage) : 1
+    );
+
+    const offset: number = (currentPage - 1) * limit;
+
+    const participations = await Participation.findAll({
+      where: { userId: userTokenData.id },
+      order: [[order, orderDirection]],
+      limit: limit,
+      offset: offset,
+      include: [
+        {
+          model: Challenge,
+          attributes: {
+            exclude: ["createdAt", "updatedAt"],
+          },
+          include: [
+            {
+              model: Category,
+              attributes: {
+                exclude: ["createdAt", "updatedAt"],
+              },
+            },
+            {
+              model: Level,
+              attributes: {
+                exclude: ["createdAt", "updatedAt"],
+              },
+            },
+            {
+              model: Game,
+              attributes: {
+                exclude: ["createdAt", "updatedAt"],
+              },
+            },
+          ],
+        },
+      ],
+    });
+
+    if (!participations || participations.length === 0) {
+      participationDebug("❌ No participations found for the user");
+      res.status(500).json({
+        success: false,
+        message: errorMessage,
+      });
+      return;
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Mes participations récupérées avec succès",
+      participations: participations,
+      pagination: {
+        currentPage: currentPage,
+        limit: limit,
+        totalPages: totalPages,
+      },
+    });
+  },
   async getPopularParticipations(req: Request, res: Response) {
     participationDebug(
       "🧩 participationController: GET api/participations/popular"
@@ -350,7 +482,7 @@ export const participationController = {
         validationErrors: validationErrors,
       });
       return;
-    };
+    }
 
     const participationId = Number(req.body.id);
     if (isNaN(participationId)) {
@@ -380,17 +512,14 @@ export const participationController = {
       });
       return;
     }
-    
+
     const updatedParticipation = await participation.update(
       {
         videoLink: videoUrl || null,
         isValidated: isValidated || false,
       },
       {
-        fields: [
-          "videoLink",
-          "isValidated",
-        ],
+        fields: ["videoLink", "isValidated"],
         returning: true,
       }
     );
