@@ -160,7 +160,7 @@ export const participationController = {
     res.status(200).json({
       success: true,
       message: "Leaderboard des participations récupéré avec succès",
-      leaderboard: rows,
+      leaderBoard: rows,
     });
   },
   async getUserParticipations(req: Request, res: Response) {
