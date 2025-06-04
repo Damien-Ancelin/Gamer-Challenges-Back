@@ -44,8 +44,14 @@ const routesConfig: RoutesConfig = {
     GET: [Role.USER, Role.ADMIN],
     POST: [Role.USER, Role.ADMIN],
   },
+  '/api/challenges/delete': {
+    DELETE: [Role.USER, Role.ADMIN],
+  },
   '/api/challenges/owner': {
     POST: [Role.USER, Role.ADMIN],
+  },
+  '/api/challenges/:id/update': {
+    PATCH: [Role.USER, Role.ADMIN],
   },
   '/api/challenges/:id': {
     GET: [],

@@ -5,12 +5,15 @@ import { cloudinaryService } from "services/cloudinaryService";
 import {
   challengeOwnerSchema,
   createChallengeSchema,
+  deleteChallengeSchema,
+  updateChallengeSchema,
 } from "validations/challengeValidations";
 
 import { Category } from "models/CategoryModel";
 import { Level } from "models/LevelModel";
 import { Game } from "models/GameModel";
 import { Challenge } from "models/ChallengeModel";
+import { Participation } from "models/ParticipationModel";
 
 const challengeDebug = debug("app:challengeController");
 
@@ -205,7 +208,7 @@ export const challengeController = {
       ],
     });
 
-    if(!challenges || challenges.length === 0) {
+    if (!challenges || challenges.length === 0) {
       challengeDebug("❌ No challenges found for the user");
       res.status(500).json({
         success: false,
@@ -273,6 +276,178 @@ export const challengeController = {
         levels: levels,
         games: games,
       },
+    });
+  },
+  async updateChallenge(req: Request, res: Response) {
+    challengeDebug("🧩 challengeController: POST api/challenges/update");
+    const errorMessage =
+      "Une erreur est survenue lors de la mise à jour du challenge";
+
+    const userTokenData = req.user;
+
+    if (!userTokenData) {
+      challengeDebug("❌ User token data not found");
+      res.status(401).json({
+        success: false,
+        message: "Unauthorized",
+      });
+      return;
+    }
+
+    const { error } = updateChallengeSchema.validate(req.body, {
+      abortEarly: false,
+      stripUnknown: true,
+    });
+    if (error) {
+      const validationErrors = error.details.map((ErrorDetail) => ({
+        errorMessage: ErrorDetail.message,
+      }));
+
+      challengeDebug("Validation error:", validationErrors);
+
+      res.status(400).json({
+        success: false,
+        message: errorMessage,
+        validationErrors: validationErrors,
+      });
+      return;
+    }
+
+    const { id } = req.params;
+    const { name, description, rules, gameId, categoryId, levelId, isOpen } =
+      req.body;
+
+    const challengeId = Number(id);
+    const gameIdNumber = Number(gameId);
+    const categoryIdNumber = Number(categoryId);
+    const levelIdNumber = Number(levelId);
+
+    if (
+      isNaN(challengeId) ||
+      isNaN(gameIdNumber) ||
+      isNaN(categoryIdNumber) ||
+      isNaN(levelIdNumber)
+    ) {
+      challengeDebug("❌ Invalid IDs provided");
+      res.status(400).json({
+        success: false,
+        message: errorMessage,
+      });
+      return;
+    }
+
+    const challenge = await Challenge.findByPk(challengeId);
+    if (!challenge) {
+      challengeDebug("❌ Challenge not found");
+      res.status(404).json({
+        success: false,
+        message: errorMessage,
+      });
+      return;
+    }
+    if (challenge.userId !== userTokenData.id) {
+      challengeDebug("❌ User is not the owner of the challenge");
+      res.status(403).json({
+        success: false,
+        message: "Vous ne pouvez pas modifier ce challenge",
+      });
+      return;
+    }
+
+    const challengeImage = req.file
+      ? await cloudinaryService.uploadChallengeImage(req.file.path)
+      : challenge.challengeImage;
+
+    await challenge.update({
+      name: name,
+      challengeImage: challengeImage,
+      description: description,
+      rules: rules,
+      userId: userTokenData.id,
+      categoryId: categoryIdNumber,
+      levelId: levelIdNumber,
+      gameId: gameIdNumber,
+      isOpen: isOpen !== undefined ? isOpen : challenge.isOpen,
+    });
+    challengeDebug("✅ Challenge updated successfully");
+
+    res.status(200).json({
+      success: true,
+      message: "Le challenge a été mis à jour avec succès",
+      challengeId: challenge.id,
+    });
+  },
+  async deleteChallenge(req: Request, res: Response) {
+    challengeDebug("🧩 challengeController: POST api/challenges/delete");
+    const errorMessage =
+      "Une erreur est survenue lors de la suppression du challenge";
+
+    const userTokenData = req.user;
+
+    if (!userTokenData) {
+      challengeDebug("❌ User token data not found");
+      res.status(401).json({
+        success: false,
+        message: "Unauthorized",
+      });
+      return;
+    }
+
+    const { error } = deleteChallengeSchema.validate(req.body, {
+      abortEarly: false,
+      stripUnknown: true,
+    });
+    if (error) {
+      const validationErrors = error.details.map((ErrorDetail) => ({
+        errorMessage: ErrorDetail.message,
+      }));
+
+      challengeDebug("Validation error:", validationErrors);
+
+      res.status(400).json({
+        success: false,
+        message: errorMessage,
+        validationErrors: validationErrors,
+      });
+      return;
+    }
+
+    const userId = userTokenData.id;
+    const { id } = req.body;
+    const numberId = Number(id);
+
+    if (!id || isNaN(Number(id))) {
+      challengeDebug("❌ Invalid challenge ID provided");
+      res.status(400).json({
+        success: false,
+        message: errorMessage,
+      });
+      return;
+    }
+
+    const challenge = await Challenge.findOne({
+      where: {
+        id: numberId,
+        userId: userId,
+      },
+    });
+    if (!challenge) {
+      challengeDebug("❌ Challenge not found or user is not the owner");
+      res.status(404).json({
+        success: false,
+        message: errorMessage,
+      });
+      return;
+    }
+
+    await Participation.destroy({ where: { challengeId: numberId } });
+    challengeDebug("🧩 Deleting challenge participations...");
+    
+    await challenge.destroy();
+    challengeDebug("✅ Challenge deleted successfully");
+    res.status(204).json({
+      success: true,
+      message: "Le challenge a été supprimé avec succès",
     });
   },
   async createChallenge(req: Request, res: Response) {
