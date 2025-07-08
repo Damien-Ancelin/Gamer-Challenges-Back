@@ -10,7 +10,7 @@ services:
       - .env # Charge les variables d'environnement depuis le fichier .env
     environment:
       - NODE_ENV=development # Définit la variable d'environnement NODE_ENV à "development"
-      - DEBUG=app:*,config:*,migration:*, service:*, error:* # Définit la variable d'environnement DEBUG pour activer le débogage
+      - DEBUG=app:*,config:*,migration:*, service:*, error:*, test:* # Définit la variable d'environnement DEBUG pour activer le débogage
     volumes:
       - .:/usr/src/app # Monte le dossier local ./src dans /usr/src/app du conteneur (synchronisation des fichiers source)
       - ./uploads:/usr/src/app/uploads # Monte le dossier local ./uploads dans /usr/src/app/uploads du conteneur (pour les fichiers uploadés)
