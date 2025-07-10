@@ -1,0 +1,31 @@
+# filepath: [Dockerfile.dev](http://_vscodecontentref_/3)
+
+# Utilisation de l'image officielle Node.js version 22.15-slim
+FROM node:22.15-slim 
+
+# Définir le répertoire de travail
+WORKDIR /usr/src/app
+
+# Copier uniquement les fichiers [package.json](http://_vscodecontentref_/4) et [package-lock.json](http://_vscodecontentref_/5)
+# Cela permet de tirer parti du cache Docker pour éviter de réinstaller les dépendances si ces fichiers n'ont pas changé
+COPY package*.json ./
+
+# Installer toutes les dépendances, y compris celles de développement
+RUN npm install
+
+# Copier le reste du code source dans le conteneur
+COPY . .
+
+# Exposer le port utilisé par l'application
+EXPOSE 3000
+
+# Définir l'environnement comme "development"
+ENV NODE_ENV=test
+
+# Commande par défaut pour démarrer l'application en mode développement
+CMD [ "npm", "run", "dev" ]
+
+# Ce Dockerfile est conçu pour le développement :
+# - Il installe toutes les dépendances, y compris celles de développement.
+# - Il démarre l'application en mode développement avec hot-reloading (par exemple, via nodemon).
+# - Il n'est pas optimisé pour la production.

@@ -22,6 +22,28 @@ services:
       gc-redis:
         condition: service_healthy
 
+  gc-test:
+    container_name: gc-test
+    build:
+      context: .
+      dockerfile: Dockerfile.test
+    ports:
+      - "${API_PORT_TEST}:3000"
+    env_file:
+      - .env.test
+    environment:
+      - NODE_ENV=test
+      - DEBUG=test:*
+    volumes:
+      - .:/usr/src/app
+      - ./uploads:/usr/src/app/uploads
+    restart: no
+    depends_on:
+      gc-db:
+        condition: service_healthy
+      gc-redis:
+        condition: service_healthy
+
   # Définition du service PostgreSQL
   gc-db:
     # Image Docker officielle de PostgreSQL

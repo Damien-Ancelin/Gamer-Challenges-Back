@@ -25,7 +25,7 @@
     "db:create:dev": "DEBUG=migration:* POSTGRES_HOST=localhost REDIS_URL=redis://localhost:6379 tsx src/migrations/createTables.ts",
     "db:seeding:dev": "DEBUG=migration:* POSTGRES_HOST=localhost REDIS_URL=redis://localhost:6379 tsx src/migrations/seeding.ts",
     "db:reset:dev": "DEBUG=migration:* npm run db:create:dev && npm run db:seeding:dev",
-    "test": "vitest",
+    "test": "NODE_ENV=test DEBUG=test:* vitest",
     "test:ui": "vitest --ui",
     "test:run": "vitest run",
     "coverage": "vitest run --coverage"
