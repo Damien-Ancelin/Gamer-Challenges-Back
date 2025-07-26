@@ -14,6 +14,7 @@ services:
     volumes:
       - .:/usr/src/app # Monte le dossier local ./src dans /usr/src/app du conteneur (synchronisation des fichiers source)
       - ./uploads:/usr/src/app/uploads # Monte le dossier local ./uploads dans /usr/src/app/uploads du conteneur (pour les fichiers uploadés)
+      - /usr/src/app/node_modules
     restart: unless-stopped
     # Dépendances du service
     depends_on:
@@ -35,7 +36,7 @@ services:
       - ./.env
     # Mappe le port PostgreSQL défini dans .env (par défaut 5432)
     ports:
-      - '${POSTGRES_PORT}:5432'
+      - "${POSTGRES_PORT}:5432"
     # Monte un volume local contenant des scripts d'initialisation dans le conteneur
     volumes:
       # Monte le dossier nommé Docker 'gc-pg-data' dans le conteneur PostgreSQL pour persister les données
@@ -44,7 +45,8 @@ services:
     # Vérifie si PostgreSQL est prêt à accepter des connexions
     healthcheck:
       # Commande exécutée pour vérifier l'état de PostgreSQL
-      test: ['CMD', 'pg_isready', '-U', '${POSTGRES_USER}', '-d', '${POSTGRES_DB}']
+      test:
+        ["CMD", "pg_isready", "-U", "${POSTGRES_USER}", "-d", "${POSTGRES_DB}"]
       # Intervalle entre chaque vérification
       interval: 10s
       # Temps maximum pour chaque vérification
@@ -61,7 +63,7 @@ services:
     restart: unless-stopped
     # Mappe le port Redis défini dans .env (par défaut 6379)
     ports:
-      - '${REDIS_PORT}:6379'
+      - "${REDIS_PORT}:6379"
     # Monte un volume local contenant des scripts d'initialisation dans le conteneur
     volumes:
       - gc-redis-data:/data
@@ -69,7 +71,7 @@ services:
     healthcheck:
       # Commande exécutée pour vérifier l'état de Redis
       # https://stackoverflow.com/questions/67904609/how-do-you-perform-a-healthcheck-in-the-redis-docker-image
-      test: ['CMD', 'redis-cli', 'ping']
+      test: ["CMD", "redis-cli", "ping"]
       # Intervalle entre chaque vérification
       interval: 10s
       # Temps maximum pour chaque vérification
