@@ -55,9 +55,7 @@ const invalidTestCases: AccessTokenPayload[] = [
 
 tokenServiceTestDebug("1. Starting generateAccessToken tests");
 
-// ! .skip the tests for now, reactivated later
-
-describe.skip("Token Service generateAccessToken", () => {
+describe("Token Service generateAccessToken", () => {
   for (const testCase of validTestCases){
     tokenServiceTestDebug(`⚙ Testing valid payload: ${JSON.stringify(testCase)}`);
     it('should generate a valid access token for a valid payload', () => {
@@ -79,7 +77,7 @@ describe.skip("Token Service generateAccessToken", () => {
 
 tokenServiceTestDebug("2. Starting verifyAccessToken tests");
 
-describe.skip("Token Service verifyAccessToken", () => {
+describe("Token Service verifyAccessToken", () => {
   for (const testCase of validTestCases){
     tokenServiceTestDebug(`⚙ Testing valid token: ${JSON.stringify(testCase)}`);
     it('should verify a valid access token', () => {
