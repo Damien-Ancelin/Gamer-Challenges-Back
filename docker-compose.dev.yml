@@ -10,13 +10,35 @@ services:
       - .env # Charge les variables d'environnement depuis le fichier .env
     environment:
       - NODE_ENV=development # Définit la variable d'environnement NODE_ENV à "development"
-      - DEBUG=app:*,config:*,migration:*, service:*, error:* # Définit la variable d'environnement DEBUG pour activer le débogage
+      - DEBUG=app:*,config:*,migration:*, service:*, error:*, test:* # Définit la variable d'environnement DEBUG pour activer le débogage
     volumes:
       - .:/usr/src/app # Monte le dossier local ./src dans /usr/src/app du conteneur (synchronisation des fichiers source)
       - ./uploads:/usr/src/app/uploads # Monte le dossier local ./uploads dans /usr/src/app/uploads du conteneur (pour les fichiers uploadés)
       - /usr/src/app/node_modules
     restart: unless-stopped
     # Dépendances du service
+    depends_on:
+      gc-db:
+        condition: service_healthy
+      gc-redis:
+        condition: service_healthy
+
+  gc-test:
+    container_name: gc-test
+    build:
+      context: .
+      dockerfile: Dockerfile.test
+    ports:
+      - "${API_PORT_TEST}:3000"
+    env_file:
+      - .env.test
+    environment:
+      - NODE_ENV=test
+      - DEBUG=test:*
+    volumes:
+      - .:/usr/src/app
+      - ./uploads:/usr/src/app/uploads
+    restart: no
     depends_on:
       gc-db:
         condition: service_healthy

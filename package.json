@@ -24,7 +24,11 @@
     "docker:dev:clean-restart": "docker compose -f docker-compose.dev.yml down -v --remove-orphans && docker compose -f docker-compose.dev.yml up -d --build",
     "db:create:dev": "DEBUG=migration:* POSTGRES_HOST=localhost REDIS_URL=redis://localhost:6379 tsx src/migrations/createTables.ts",
     "db:seeding:dev": "DEBUG=migration:* POSTGRES_HOST=localhost REDIS_URL=redis://localhost:6379 tsx src/migrations/seeding.ts",
-    "db:reset:dev": "DEBUG=migration:* npm run db:create:dev && npm run db:seeding:dev"
+    "db:reset:dev": "DEBUG=migration:* npm run db:create:dev && npm run db:seeding:dev",
+    "test": "NODE_ENV=test DEBUG=test:* vitest",
+    "test:ui": "vitest --ui",
+    "test:run": "vitest run",
+    "coverage": "vitest run --coverage"
   },
   "repository": {
     "type": "git",
@@ -61,8 +65,11 @@
     "@types/morgan": "^1.9.9",
     "@types/node": "^22.15.18",
     "@types/pg": "^8.15.1",
+    "@vitest/coverage-v8": "^3.2.4",
+    "@vitest/ui": "^3.2.4",
     "tsc-alias": "^1.8.16",
     "tsx": "^4.19.4",
-    "typescript": "^5.8.3"
+    "typescript": "^5.8.3",
+    "vitest": "^3.2.4"
   }
 }

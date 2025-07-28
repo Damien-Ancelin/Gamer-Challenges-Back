@@ -19,7 +19,7 @@
     "paths": {
       "*": [
         "node_modules/*",                     // Résout d'abord dans node_modules
-        "src/*"                               // Puis dans src/
+        "src/*",                             // Puis dans src/
       ]
     }
   },
@@ -27,6 +27,6 @@
     "resolveFullPaths": true,                 // Résout les chemins d'alias en chemins absolus
     "verbose": false                         // Désactive les logs détaillés
   },
-  "include": ["src/**/*"],                   // Inclut tous les fichiers du dossier src
+  "include": ["src/**/*"], // Inclut tous les fichiers du dossier src
   "exclude": ["node_modules", "dist"]        // Exclut node_modules et dist de la compilation
 }

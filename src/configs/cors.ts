@@ -7,6 +7,7 @@ export const configureCors = () => {
   const FRONTEND_URL = process.env.FRONTEND_URL;
   const FRONTEND_PREVIEW_URL= process.env.FRONTEND_PREVIEW_URL;
   const API_URL = process.env.API_URL;
+  const API_URL_TEST = process.env.API_URL_TEST;
 
   if (!FRONTEND_URL || !API_URL) {
     if(process.env.NODE_ENV !== "production") {
@@ -17,7 +18,7 @@ export const configureCors = () => {
   }
   
   return cors({
-    origin: [FRONTEND_URL, API_URL, FRONTEND_PREVIEW_URL].filter((url): url is string => Boolean(url)), // Filtrer les valeurs undefined
+    origin: [FRONTEND_URL, API_URL, API_URL_TEST, FRONTEND_PREVIEW_URL].filter((url): url is string => Boolean(url)), // Filtrer les valeurs undefined
     methods: ['GET', 'POST', 'PATCH', 'DELETE'], // HTTP Method allowed
     credentials: true, // Autorize sending cookies
   });

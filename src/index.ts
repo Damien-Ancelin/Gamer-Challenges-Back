@@ -31,7 +31,7 @@ app.use("/uploads", express.static(uploadDir));
 
 // Morgan logging middleware
 // Morgan is a logging library for Node.js HTTP servers
-process.env.NODE_ENV === "production"
+(process.env.NODE_ENV === "production" || process.env.NODE_ENV === "test")
   ? app.use(morgan('combined'))
   : app.use(morgan('dev'));
 
