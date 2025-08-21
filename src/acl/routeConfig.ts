@@ -11,11 +11,11 @@ const routesConfig: RoutesConfig = {
   '/api/auth/login': {
     POST: [],
   },
-  '/api/auth/logout': {
-    DELETE: [],
-  },
   '/api/auth/register': {
     POST: [],
+  },
+  '/api/auth/logout': {
+    DELETE: [],
   },
   '/api/auth/refresh': {
     POST: [],

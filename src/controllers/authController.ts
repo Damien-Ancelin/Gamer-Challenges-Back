@@ -58,7 +58,7 @@ export const authController = {
     const AccessToken = await user.generateAccessToken();
     const RefreshToken = await user.generateRefreshToken();
 
-    // ? Création des cookies
+    // ? Cookies creation
     res.cookie("accessToken", AccessToken, accessTokenCookieOptions);
     res.cookie("refreshToken", RefreshToken, refreshTokenCookieOptions);
 

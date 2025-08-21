@@ -29,6 +29,8 @@ export interface GameCreation
   timestamps: true,
 })
 
+// The Game model extends the Sequelize Model class.
+// And implements the GameAttributes interface.
 export class Game extends Model<GameAttributes, GameCreation> implements GameAttributes {
   @Column({
     type: DataType.INTEGER,

@@ -101,7 +101,6 @@ const sequelizeDebug = debug("migration:sequelize");
     sequelizeDebug("✅ All models were dropped successfully.");
 
     // * Init Data
-
     // 1. Create Roles
     const roles = await Role.bulkCreate([{ name: "user" }, { name: "admin" }]);
     sequelizeDebug("✅ Roles created successfully.");
@@ -128,7 +127,6 @@ const sequelizeDebug = debug("migration:sequelize");
     }
 
     const createdUsers = await User.bulkCreate(users);
-
     sequelizeDebug("✅ Users created successfully.");
 
     // 3. Associate Users with Roles
@@ -354,8 +352,8 @@ const sequelizeDebug = debug("migration:sequelize");
     // 11. Create Challenge Reviews
     const challengeReviews = [];
 
-    // ? create un set pour stocker les paires user-challenge déjà utilisées
-    // https://developer.mozilla.org/fr/docs/Web/JavaScript/Reference/Global_Objects/Set
+    // * create a set to stock user-challenge pairs already used
+    // * https://developer.mozilla.org/fr/docs/Web/JavaScript/Reference/Global_Objects/Set
     const usedUserChallengePairs = new Set();
 
     for (let i = 0; i < 200; i++) {
@@ -364,19 +362,19 @@ const sequelizeDebug = debug("migration:sequelize");
       const randomChallenge =
         createdChallenges[Math.floor(Math.random() * createdChallenges.length)];
 
-      // ? créer une clé unique pour la paire user-challenge
+      // * create a unique key for the user-challenge pair
       const key = `${randomUser.id}-${randomChallenge.id}`;
 
-      // ? vérifier si la paire user-challenge existe déjà
+      // * check if the user-challenge pair already exists
       if (usedUserChallengePairs.has(key)) {
-        // Cette paire user-challenge existe déjà, on saute ce tour
+        // This user-challenge pair already exists, skip this iteration
         sequelizeDebug(
           `⛔ Skipping duplicate user-challenge-review pair: ${key}`
         );
         continue;
       }
 
-      // ? ajouter la paire user-challenge au set
+      // * add the user-challenge pair to the set
       usedUserChallengePairs.add(key);
 
       challengeReviews.push({

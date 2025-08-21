@@ -337,14 +337,6 @@ export const participationController = {
 
     const offset: number = (currentPage - 1) * limit;
 
-    /* 
-    select "participation"."challenge_id", COUNT("participation"."id") as "participation_count"
-    from "participation"
-    GROUP BY  "participation"."challenge_id"
-    ORDER BY "participation_count" DESC
-    limit = '5';
-    */
-
     const [rows]: any[] = await sequelize.query(
       `
       SELECT 

@@ -1,22 +1,22 @@
 services:
-  gc-api: # Définition du service principal nommé "node-api"
-    container_name: gc-api # Nom du conteneur Docker pour ce service
+  gc-api: # Main service definition named "gc-api"
+    container_name: gc-api # Docker container name for this service
     build:
-      context: . # Le contexte de construction est le répertoire actuel
-      dockerfile: Dockerfile.dev # Utilise le fichier Dockerfile.dev pour construire l'image
+      context: . # Build context is the current directory
+      dockerfile: Dockerfile.dev # Uses Dockerfile.dev to build the image
     ports:
-      - "${API_PORT}:3000" # Mappe le port défini dans la variable d'environnement API_PORT au port 3000 du conteneur
+      - "${API_PORT}:3000" # Maps the port defined in the API_PORT env variable to container port 3000
     env_file:
-      - .env # Charge les variables d'environnement depuis le fichier .env
+      - .env # Loads environment variables from the .env file
     environment:
-      - NODE_ENV=development # Définit la variable d'environnement NODE_ENV à "development"
-      - DEBUG=app:*,config:*,migration:*, service:*, error:*, test:* # Définit la variable d'environnement DEBUG pour activer le débogage
+      - NODE_ENV=development # Sets NODE_ENV to "development"
+      - DEBUG=app:*,config:*,migration:*, service:*, error:*, test:* # Sets DEBUG env variable to enable debugging
     volumes:
-      - .:/usr/src/app # Monte le dossier local ./src dans /usr/src/app du conteneur (synchronisation des fichiers source)
-      - ./uploads:/usr/src/app/uploads # Monte le dossier local ./uploads dans /usr/src/app/uploads du conteneur (pour les fichiers uploadés)
+      - .:/usr/src/app # Mounts local ./src folder to /usr/src/app in the container (source sync)
+      - ./uploads:/usr/src/app/uploads # Mounts local ./uploads to /usr/src/app/uploads in the container (for uploaded files)
       - /usr/src/app/node_modules
     restart: unless-stopped
-    # Dépendances du service
+    # Service dependencies
     depends_on:
       gc-db:
         condition: service_healthy
@@ -45,63 +45,63 @@ services:
       gc-redis:
         condition: service_healthy
 
-  # Définition du service PostgreSQL
+  # PostgreSQL service definition
   gc-db:
-    # Image Docker officielle de PostgreSQL
+    # Official PostgreSQL Docker image
     image: postgres:16
-    # Nom explicite du conteneur pour faciliter son identification
+    # Explicit container name for easier identification
     container_name: gc-db
-    # Redémarre automatiquement le conteneur sauf en cas d'arrêt manuel
+    # Automatically restart the container unless stopped manually
     restart: unless-stopped
-    # Charge les variables d'environnement depuis le fichier ./env
+    # Loads environment variables from the .env file
     env_file:
       - ./.env
-    # Mappe le port PostgreSQL défini dans .env (par défaut 5432)
+    # Maps PostgreSQL port defined in .env (default 5432)
     ports:
       - "${POSTGRES_PORT}:5432"
-    # Monte un volume local contenant des scripts d'initialisation dans le conteneur
+    # Mounts a local volume containing initialization scripts into the container
     volumes:
-      # Monte le dossier nommé Docker 'gc-pg-data' dans le conteneur PostgreSQL pour persister les données
+      # Mounts the named Docker volume 'gc-pg-data' into PostgreSQL for data persistence
       - gc-pg-data:/var/lib/postgresql/data
 
-    # Vérifie si PostgreSQL est prêt à accepter des connexions
+    # Checks if PostgreSQL is ready to accept connections
     healthcheck:
-      # Commande exécutée pour vérifier l'état de PostgreSQL
+      # Command executed to check PostgreSQL status
       test:
         ["CMD", "pg_isready", "-U", "${POSTGRES_USER}", "-d", "${POSTGRES_DB}"]
-      # Intervalle entre chaque vérification
+      # Interval between checks
       interval: 10s
-      # Temps maximum pour chaque vérification
+      # Max time for each check
       timeout: 5s
-      # Nombre de tentatives avant de considérer le service comme non sain
+      # Number of attempts before considering the service unhealthy
       retries: 5
 
   gc-redis:
-    # Image Docker officielle de Redis
+    # Official Redis Docker image
     image: redis:latest
-    # Nom explicite du conteneur pour faciliter son identification
+    # Explicit container name for easier identification
     container_name: gc-redis
-    # Redémarre automatiquement le conteneur sauf en cas d'arrêt manuel
+    # Automatically restart the container unless stopped manually
     restart: unless-stopped
-    # Mappe le port Redis défini dans .env (par défaut 6379)
+    # Maps Redis port defined in .env (default 6379)
     ports:
       - "${REDIS_PORT}:6379"
-    # Monte un volume local contenant des scripts d'initialisation dans le conteneur
+    # Mounts a local volume containing initialization scripts into the container
     volumes:
       - gc-redis-data:/data
-    # Vérifie si Redis est prêt à accepter des connexions
+    # Checks if Redis is ready to accept connections
     healthcheck:
-      # Commande exécutée pour vérifier l'état de Redis
+      # Command executed to check Redis status
       # https://stackoverflow.com/questions/67904609/how-do-you-perform-a-healthcheck-in-the-redis-docker-image
       test: ["CMD", "redis-cli", "ping"]
-      # Intervalle entre chaque vérification
+      # Interval between checks
       interval: 10s
-      # Temps maximum pour chaque vérification
+      # Max time for each check
       timeout: 5s
-      # Nombre de tentatives avant de considérer le service comme non sain
+      # Number of attempts before considering the service unhealthy
       retries: 5
 
-# Déclaration des volumes nommés
+# Named volumes declaration
 volumes:
   gc-pg-data:
   gc-redis-data:

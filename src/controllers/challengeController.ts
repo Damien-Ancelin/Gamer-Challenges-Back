@@ -442,7 +442,7 @@ export const challengeController = {
 
     await Participation.destroy({ where: { challengeId: numberId } });
     challengeDebug("🧩 Deleting challenge participations...");
-    
+
     await challenge.destroy();
     challengeDebug("✅ Challenge deleted successfully");
     res.status(204).json({
@@ -641,7 +641,7 @@ export const challengeController = {
     challengeDebug("✅ Successfully retrieved challenge by ID");
     res.status(200).json({
       success: true,
-      message: "Challenge retrieved successfully",
+      message: "Challenge récupéré avec succès",
       challenge: challenge,
     });
   },

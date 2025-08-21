@@ -17,4 +17,3 @@ participationRouter.post('/owner', controllerWrapper(participationController.get
 participationRouter.get('/challenge/:challenge_id/count', controllerWrapper(participationController.getParticipationReviewByChallengeId));
 participationRouter.get('/challenge/:challenge_id', controllerWrapper(participationController.getParticipationsByChallengeId));
 participationRouter.get('/:id', controllerWrapper(participationController.getParticipationById));
-

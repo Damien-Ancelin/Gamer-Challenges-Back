@@ -118,6 +118,7 @@ export async function checkUser(req: Request, res: Response) {
     }
 
     // * Good at this point, the user is authorized
+    // * The token informations are used to calculated the TTL (Time To Live) of the token
     const expirationInSeconds = decodedToken.exp - decodedToken.iat;
 
     req.user = {

@@ -41,7 +41,7 @@ export const accountController = {
 
     res.status(200).json({
       success: true,
-      message: "Bienvenue sur votre midification de compte",
+      message: "Bienvenue sur votre modification de compte",
       user: user,
     });
   },
@@ -146,7 +146,7 @@ export const accountController = {
 
     res.status(200).json({
       success: true,
-      message: "En cours de modification",
+      message: "Modification réalisé avec succès",
       user: updatedUser,
     });
   },
